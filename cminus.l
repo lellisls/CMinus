@@ -1,0 +1,86 @@
+/****************************************************/
+/* File: tiny.l                                     */
+/* Lex specification for TINY                       */
+/* Compiler Construction: Principles and Practice   */
+/* Kenneth C. Louden                                */
+/****************************************************/
+
+%{
+#include "globals.h"
+
+int lineno; /* source line number for listing */
+
+//#include "util.h"
+//#include "scan.h"
+/* lexeme of identifier or reserved word */
+char tokenString[MAXTOKENLEN+1];
+%}
+
+digit       [0-9]
+number      {digit}+
+fnum	    {digit}*\.{number}|{number}\.{digit}*
+letter      [a-zA-Z]
+identifier  {letter}+
+newline     \n
+whitespace  [ \t]+
+
+%%
+
+"if"            {return IF;}
+"else"          {return ELSE;}
+"int"		{return INT;}
+"float"		{return FLOAT;}
+"void"		{return VOID;}
+"return"	{return RETURN;}
+"while"		{return WHILE;}
+"=="            {return EQ;}
+"!="            {return NEQ;}
+"="             {return ASSIGN;}
+"<"             {return LT;}
+"<="            {return LE;}
+">"             {return GT;}
+">="            {return GE;}
+"+"             {return PLUS;}
+"-"             {return MINUS;}
+"*"             {return TIMES;}
+"/"             {return OVER;}
+"("             {return LPAREN;}
+")"             {return RPAREN;}
+"["             {return LBOX;}
+"]"             {return RBOX;}
+"{"             {return LKEY;}
+"}"             {return RKEY;}
+"/*"            {return LCOMM;}
+"*/"            {return RCOMM;}
+";"             {return SEMI;}
+","             {return COLON;}
+{fnum}		{return FLOAT;}
+{number}        {return NUM;}
+{identifier}    {return ID;}
+{newline}       {lineno++;}
+{whitespace}    {/* skip whitespace */}
+.               {return ERROR;}
+
+%%
+
+FILE* source;
+
+TokenType getToken(void)
+{ static int firstTime = TRUE;
+  TokenType currentToken;
+  if (firstTime)
+  { firstTime = FALSE;
+    lineno++;
+    yyin = source;
+  }
+  currentToken = yylex();
+  strncpy(tokenString,yytext,MAXTOKENLEN);
+  return currentToken;
+}
+
+int main(int argc, char *argv) {
+  source = fopen(argv[1],'r');
+
+  return(0);
+}
+
