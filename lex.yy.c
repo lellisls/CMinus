@@ -8,7 +8,7 @@
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
 #define YY_FLEX_MINOR_VERSION 5
-#define YY_FLEX_SUBMINOR_VERSION 39
+#define YY_FLEX_SUBMINOR_VERSION 37
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -167,7 +167,6 @@ extern FILE *yyin, *yyout;
 #define EOB_ACT_LAST_MATCH 2
 
     #define YY_LESS_LINENO(n)
-    #define YY_LINENO_REWIND_TO(ptr)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -507,7 +506,7 @@ int lineno; /* source line number for listing */
 //#include "scan.h"
 /* lexeme of identifier or reserved word */
 char tokenString[MAXTOKENLEN+1];
-#line 511 "lex.yy.c"
+#line 510 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -689,6 +688,11 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
+#line 27 "cminus.l"
+
+
+#line 695 "lex.yy.c"
+
 	if ( !(yy_init) )
 		{
 		(yy_init) = 1;
@@ -715,12 +719,6 @@ YY_DECL
 		yy_load_buffer_state( );
 		}
 
-	{
-#line 27 "cminus.l"
-
-
-#line 723 "lex.yy.c"
-
 	while ( 1 )		/* loops until end-of-file is reached */
 		{
 		yy_cp = (yy_c_buf_p);
@@ -737,7 +735,7 @@ YY_DECL
 yy_match:
 		do
 			{
-			register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)] ;
+			register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
 			if ( yy_accept[yy_current_state] )
 				{
 				(yy_last_accepting_state) = yy_current_state;
@@ -942,19 +940,21 @@ YY_RULE_SETUP
 #line 61 "cminus.l"
 {/* skip whitespace */}
 	YY_BREAK
+case YY_STATE_EOF(INITIAL):
+#line 62 "cminus.l"
+{return ENDFILE;}
+	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 62 "cminus.l"
+#line 63 "cminus.l"
 {return ERROR;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 64 "cminus.l"
+#line 65 "cminus.l"
 ECHO;
 	YY_BREAK
-#line 956 "lex.yy.c"
-case YY_STATE_EOF(INITIAL):
-	yyterminate();
+#line 958 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1083,7 +1083,6 @@ case YY_STATE_EOF(INITIAL):
 			"fatal flex scanner internal error--no action found" );
 	} /* end of action switch */
 		} /* end of scanning one token */
-	} /* end of user's declarations */
 } /* end of yylex */
 
 /* yy_get_next_buffer - try to read in a new buffer
@@ -1947,13 +1946,13 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 64 "cminus.l"
+#line 65 "cminus.l"
 
 
 
 FILE* source;
 
-TokenType getToken(void)
+/*TokenType getToken(void)
 { static int firstTime = TRUE;
   TokenType currentToken;
   if (firstTime)
@@ -1964,12 +1963,23 @@ TokenType getToken(void)
   currentToken = yylex();
   strncpy(tokenString,yytext,MAXTOKENLEN);
   return currentToken;
-}
+}*/
 
-int main(int argc, char *argv) {
-  source = fopen(argv[1],'r');
-
+int main(int argc, char *argv[]) {
+  if(argc == 2 ){
+    if(source = fopen(argv[1],"r"))  yyin = source;
+    else  perror(argv[0]);
+  }else{
+    yyin = stdin;
+  }
+  int token;
+  while ((token=yylex())!=ENDFILE) {
+    if(token == ERROR){
+      printf("Error found at line %d: %s\n", lineno, yytext);
+    }else{
+      printf("\'%s\' : \'%s\'\n", yytext, tokenToString(token));
+    }
+  }
   return(0);
 }
-
 
