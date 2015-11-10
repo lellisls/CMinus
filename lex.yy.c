@@ -500,7 +500,7 @@ char *yytext;
 #line 8 "cminus.l"
 #include "globals.h"
 
-int lineno; /* source line number for listing */
+int lineno = 1; /* source line number for listing */
 
 //#include "util.h"
 //#include "scan.h"
@@ -908,7 +908,7 @@ YY_RULE_SETUP
 case 27:
 YY_RULE_SETUP
 #line 54 "cminus.l"
-{return FLOAT;}
+{return FNUM;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
@@ -943,12 +943,12 @@ YY_RULE_SETUP
                   { c1 = input();
                     if (c1 == EOF) break;
                     if (c1 == '\n') lineno++;
-					if (c1 == '*'){
-					  c2 = input();
+          					if (c1 == '*'){
+          					  c2 = input();
                       if (c2 == EOF) break;
-					  if (c2 == '\n') lineno++;
-					}
-                  } while (c1 != '*' && c2 != '/');
+          					  if (c2 == '\n') lineno++;
+          					}
+                  } while (c1 != '*' || c2 != '/');
                 }
 	YY_BREAK
 case 33:

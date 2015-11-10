@@ -7,7 +7,7 @@
 %{
 #include "globals.h"
 
-int lineno; /* source line number for listing */
+int lineno = 1; /* source line number for listing */
 
 //#include "util.h"
 //#include "scan.h"
@@ -51,7 +51,7 @@ whitespace  [ \t]+
 "}"             {return RKEY;}
 ";"             {return SEMI;}
 ","             {return COLON;}
-{fnum}		    {return FLOAT;}
+{fnum}		    {return FNUM;}
 {number}        {return NUM;}
 {identifier}    {return ID;}
 {newline}       {lineno++;}
@@ -62,12 +62,12 @@ whitespace  [ \t]+
                   { c1 = input();
                     if (c1 == EOF) break;
                     if (c1 == '\n') lineno++;
-					if (c1 == '*'){
-					  c2 = input();
+          					if (c1 == '*'){
+          					  c2 = input();
                       if (c2 == EOF) break;
-					  if (c2 == '\n') lineno++;
-					}
-                  } while (c1 != '*' && c2 != '/');
+          					  if (c2 == '\n') lineno++;
+          					}
+                  } while (c1 != '*' || c2 != '/');
                 }
 .               {return ERROR;}
 
