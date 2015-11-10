@@ -1,4 +1,3 @@
 cminus:
 	flex cminus.l
-	gcc -o alcminus lex.yy.c  -lfl
- 
+	gcc -o bin/alcminus lex.yy.c  -lfl
