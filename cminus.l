@@ -49,16 +49,26 @@ whitespace  [ \t]+
 "]"             {return RBOX;}
 "{"             {return LKEY;}
 "}"             {return RKEY;}
-"/*"            {return LCOMM;}
-"*/"            {return RCOMM;}
 ";"             {return SEMI;}
 ","             {return COLON;}
-{fnum}		{return FLOAT;}
+{fnum}		    {return FLOAT;}
 {number}        {return NUM;}
 {identifier}    {return ID;}
 {newline}       {lineno++;}
 {whitespace}    {/* skip whitespace */}
 <<EOF>>         {return ENDFILE;}
+"/*"             { char c1,c2;
+                  do
+                  { c1 = input();
+                    if (c1 == EOF) break;
+                    if (c1 == '\n') lineno++;
+					if (c1 == '*'){
+					  c2 = input();
+                      if (c2 == EOF) break;
+					  if (c2 == '\n') lineno++;
+					}
+                  } while (c1 != '*' && c2 != '/');
+                }
 .               {return ERROR;}
 
 %%
