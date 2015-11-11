@@ -22,6 +22,7 @@ letter      [a-zA-Z]
 identifier  {letter}+
 newline     \n
 whitespace  [ \t]+
+OUTRO       [^0-9a-zA-Z;/=\-"+""*""("")""!"">""<""{""}""[""\]"","\n]
 
 %%
 
@@ -69,7 +70,7 @@ whitespace  [ \t]+
           					}
                   } while (c1 != '*' || c2 != '/');
                 }
-.               {return ERROR;}
+{OUTRO}+        {return ERROR;}
 
 %%
 

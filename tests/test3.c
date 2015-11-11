@@ -1,8 +1,8 @@
 /* Um programa para ordenação por seleção de
    uma matriz com dez elementos. */
-   
+
    int x[10];
-   
+
    int minloc (int a[], int low, int high)
    { int i; int x; int k;
    k = low;
@@ -16,7 +16,7 @@
 	 }
    return k;
    }
-   
+
    void sort (int a[], int low, int high)
    { int i; int k;
      i = low;
@@ -29,7 +29,7 @@
 	   i = i + 1;
 	 }
    }
-   
+
    void main(void)
    { int i;
      i = 0;
