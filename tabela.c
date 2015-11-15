@@ -89,6 +89,10 @@ void imprimeEntrada( EntradaTabela *entrada ) {
 
 }
 
+/* Estou pensando em usar a mesma estrutura do parser da última aula pra
+ * implementar essa tabela de símbolos.
+ */
+
 int main( ) {
   EntradaTabela * ent = criaEntrada( "Hakuna Matata", VAR, INT, NULL, 10 );
   int pos = insereNovaEntrada( ent );
