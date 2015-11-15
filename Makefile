@@ -15,3 +15,7 @@ test3: cminus
 
 test4: cminus
 	bin/alcminus tests/${@}.c
+
+tabela:
+	gcc ${@}.c -o bin/${@}
+	bin/${@}
