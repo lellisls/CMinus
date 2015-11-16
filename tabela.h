@@ -93,11 +93,11 @@ void imprimeEntrada( EntradaTabela *entrada ) {
  * implementar essa tabela de símbolos.
  */
 
-int main( ) {
-  EntradaTabela * myFunc  = criaEntrada( "MyFunc", FUN, INT, NULL, 10 );  
-  EntradaTabela * ent = criaEntrada( "HakunaMatata", VAR, INT, myFunc, 10 );
-  int pos = insereNovaEntrada( ent );
-  printf( "Entrada '%s'inserida na posição %d\n", ent->idName, pos );
-  imprimeEntrada(ent);
-  return( 0 );
-}
+// int main( ) {
+//   EntradaTabela * myFunc  = criaEntrada( "MyFunc", FUN, INT, NULL, 10 );
+//   EntradaTabela * ent = criaEntrada( "HakunaMatata", VAR, INT, myFunc, 10 );
+//   int pos = insereNovaEntrada( ent );
+//   printf( "Entrada '%s'inserida na posição %d\n", ent->idName, pos );
+//   imprimeEntrada(ent);
+//   return( 0 );
+// }
