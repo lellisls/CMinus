@@ -11,7 +11,7 @@ typedef TokenType DataType;
 typedef enum idtype { VAR, FUN, VET } IdType;
 
 typedef struct entradaTab {
-  char idName[ 128 ]; /* Nome do id */
+  char idName[ 64 ]; /* Nome do id */
   IdType idType; /* Tipo de ID ( Cariável, Função ou Vetor) */
   DataType dType; /* Tipo de dado (int, float ou void) */
   struct entradaTab *escopo; /* Escopo (apenas para variavel e vetor) */
@@ -94,7 +94,8 @@ void imprimeEntrada( EntradaTabela *entrada ) {
  */
 
 int main( ) {
-  EntradaTabela * ent = criaEntrada( "Hakuna Matata", VAR, INT, NULL, 10 );
+  EntradaTabela * myFunc  = criaEntrada( "MyFunc", FUN, INT, NULL, 10 );  
+  EntradaTabela * ent = criaEntrada( "HakunaMatata", VAR, INT, myFunc, 10 );
   int pos = insereNovaEntrada( ent );
   printf( "Entrada '%s'inserida na posição %d\n", ent->idName, pos );
   imprimeEntrada(ent);
