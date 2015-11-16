@@ -14,6 +14,7 @@
 int linenbr = 1; /* source line number for listing */
 int whileCounter = 0;
 int ifCounter = 0;
+int elseCounter = 0;
 //#include "util.h"
 //#include "scan.h"
 /* lexeme of identifier or reserved word */
@@ -211,14 +212,18 @@ int main(int argc, char *argv[]) {
         char buffer[255];
         snprintf(buffer,16, "%d", whileCounter++);
         strcat(temp, buffer);
-        // strcpy(lastId,temp);
         empilha(temp);
       }else if(token == IF){
         char temp[255] = "if";
         char buffer[255];
         snprintf(buffer,16, "%d", ifCounter++);
         strcat(temp, buffer);
-        // strcpy(lastId,temp);
+        empilha(temp);
+      }else if(token == ELSE){
+        char temp[255] = "else";
+        char buffer[255];
+        snprintf(buffer,16, "%d", elseCounter++);
+        strcat(temp, buffer);
         empilha(temp);
       }
     }

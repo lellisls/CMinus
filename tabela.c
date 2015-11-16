@@ -517,11 +517,12 @@ char *yytext;
 int linenbr = 1; /* source line number for listing */
 int whileCounter = 0;
 int ifCounter = 0;
+int elseCounter = 0;
 //#include "util.h"
 //#include "scan.h"
 /* lexeme of identifier or reserved word */
 char tokenString[MAXTOKENLEN+1];
-#line 525 "tabela.c"
+#line 526 "tabela.c"
 
 #define INITIAL 0
 
@@ -708,10 +709,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 32 "cmenostabela.l"
+#line 33 "cmenostabela.l"
 
 
-#line 715 "tabela.c"
+#line 716 "tabela.c"
 
 	if ( !(yy_init) )
 		{
@@ -796,167 +797,167 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 34 "cmenostabela.l"
+#line 35 "cmenostabela.l"
 {return IF;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 35 "cmenostabela.l"
+#line 36 "cmenostabela.l"
 {return ELSE;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 36 "cmenostabela.l"
+#line 37 "cmenostabela.l"
 {return INT;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 37 "cmenostabela.l"
+#line 38 "cmenostabela.l"
 {return FLOAT;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 38 "cmenostabela.l"
+#line 39 "cmenostabela.l"
 {return VOID;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 39 "cmenostabela.l"
+#line 40 "cmenostabela.l"
 {return RETURN;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 40 "cmenostabela.l"
+#line 41 "cmenostabela.l"
 {return WHILE;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 41 "cmenostabela.l"
+#line 42 "cmenostabela.l"
 {return EQ;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 42 "cmenostabela.l"
+#line 43 "cmenostabela.l"
 {return NEQ;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 43 "cmenostabela.l"
+#line 44 "cmenostabela.l"
 {return ASSIGN;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 44 "cmenostabela.l"
+#line 45 "cmenostabela.l"
 {return LT;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 45 "cmenostabela.l"
+#line 46 "cmenostabela.l"
 {return LE;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 46 "cmenostabela.l"
+#line 47 "cmenostabela.l"
 {return GT;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 47 "cmenostabela.l"
+#line 48 "cmenostabela.l"
 {return GE;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 48 "cmenostabela.l"
+#line 49 "cmenostabela.l"
 {return PLUS;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 49 "cmenostabela.l"
+#line 50 "cmenostabela.l"
 {return MINUS;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 50 "cmenostabela.l"
+#line 51 "cmenostabela.l"
 {return TIMES;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 51 "cmenostabela.l"
+#line 52 "cmenostabela.l"
 {return OVER;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 52 "cmenostabela.l"
+#line 53 "cmenostabela.l"
 {return LPAREN;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 53 "cmenostabela.l"
+#line 54 "cmenostabela.l"
 {return RPAREN;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 54 "cmenostabela.l"
+#line 55 "cmenostabela.l"
 {return LBOX;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 55 "cmenostabela.l"
+#line 56 "cmenostabela.l"
 {return RBOX;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 56 "cmenostabela.l"
+#line 57 "cmenostabela.l"
 {return LKEY;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 57 "cmenostabela.l"
+#line 58 "cmenostabela.l"
 {return RKEY;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 58 "cmenostabela.l"
+#line 59 "cmenostabela.l"
 {return SEMI;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 59 "cmenostabela.l"
+#line 60 "cmenostabela.l"
 {return COLON;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 60 "cmenostabela.l"
+#line 61 "cmenostabela.l"
 {return FNUM;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 61 "cmenostabela.l"
+#line 62 "cmenostabela.l"
 {return NUM;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 62 "cmenostabela.l"
+#line 63 "cmenostabela.l"
 {return ID;}
 	YY_BREAK
 case 30:
 /* rule 30 can match eol */
 YY_RULE_SETUP
-#line 63 "cmenostabela.l"
+#line 64 "cmenostabela.l"
 {linenbr++;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 64 "cmenostabela.l"
+#line 65 "cmenostabela.l"
 {/* skip whitespace */}
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 65 "cmenostabela.l"
+#line 66 "cmenostabela.l"
 {return ENDFILE;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 66 "cmenostabela.l"
+#line 67 "cmenostabela.l"
 { char c1,c2;
                   do
                   { c1 = input();
@@ -972,15 +973,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 78 "cmenostabela.l"
+#line 79 "cmenostabela.l"
 {return ERROR;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 80 "cmenostabela.l"
+#line 81 "cmenostabela.l"
 ECHO;
 	YY_BREAK
-#line 984 "tabela.c"
+#line 985 "tabela.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1976,7 +1977,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 80 "cmenostabela.l"
+#line 81 "cmenostabela.l"
 
 
 
@@ -2112,14 +2113,18 @@ int main(int argc, char *argv[]) {
         char buffer[255];
         snprintf(buffer,16, "%d", whileCounter++);
         strcat(temp, buffer);
-        // strcpy(lastId,temp);
         empilha(temp);
       }else if(token == IF){
         char temp[255] = "if";
         char buffer[255];
         snprintf(buffer,16, "%d", ifCounter++);
         strcat(temp, buffer);
-        // strcpy(lastId,temp);
+        empilha(temp);
+      }else if(token == ELSE){
+        char temp[255] = "else";
+        char buffer[255];
+        snprintf(buffer,16, "%d", elseCounter++);
+        strcat(temp, buffer);
         empilha(temp);
       }
     }
