@@ -53,12 +53,6 @@ int hash( char *key ) {
 
 EntradaTabela *tabelaSimbolos[ SIZE ];
 
-void inicializaTabela( ) {
-  for( int i = 0; i < SIZE; ++i ) {
-    tabelaSimbolos[ i ] = NULL;
-  }
-}
-
 void apagaTabela( ) {
   for( int i = 0; i < SIZE; ++i ) {
     if(tabelaSimbolos[ i ] != NULL){
@@ -74,8 +68,12 @@ EntradaTabela* criaEntrada( char idName[ 256 ], IdType idType, DataType dType, c
   e->idType = idType;
   e->dType = dType;
   strcpy(e->escopo, escopo);
-  e->nLinhas = 1;
-  e->linhas[ 0 ] = linha;
+  if(linha >= 0){
+    e->nLinhas = 1;
+    e->linhas[ 0 ] = linha;
+  }else{
+    e->nLinhas = 0;
+  }
   e->prox = NULL;
   return( e );
 }
@@ -102,6 +100,14 @@ int insereNovaEntrada( EntradaTabela *entrada ) {
     p->prox = entrada;
   }
   return( pos );
+}
+
+void inicializaTabela( ) {
+  for( int i = 0; i < SIZE; ++i ) {
+    tabelaSimbolos[ i ] = NULL;
+  }
+  insereNovaEntrada( criaEntrada("input",FUN,VOID,"global",-1) );
+  insereNovaEntrada( criaEntrada("output",FUN,VOID,"global",-1) );
 }
 
 void adicionaLinha( EntradaTabela *e, int linha ) {

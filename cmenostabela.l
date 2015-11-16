@@ -191,6 +191,7 @@ int main(int argc, char *argv[]) {
   }else{
     yyin = stdin;
   }
+  inicializaTabela( );
   int token;
   while ((token=yylex())!=ENDFILE) {
     if(token == ERROR){
