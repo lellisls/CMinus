@@ -7,8 +7,13 @@
 %{
 #include "globals.h"
 #include "tabela.h"
-int lineno = 1; /* source line number for listing */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
+int linenbr = 1; /* source line number for listing */
+int whileCounter = 0;
+int ifCounter = 0;
 //#include "util.h"
 //#include "scan.h"
 /* lexeme of identifier or reserved word */
@@ -55,18 +60,18 @@ OUTRO       [^0-9a-zA-Z;/=\-"+""*""("")""!"">""<""{""}""[""\]"","\n]
 {fnum}		    {return FNUM;}
 {number}        {return NUM;}
 {identifier}    {return ID;}
-{newline}       {lineno++;}
+{newline}       {linenbr++;}
 {whitespace}    {/* skip whitespace */}
 <<EOF>>         {return ENDFILE;}
 "/*"             { char c1,c2;
                   do
                   { c1 = input();
                     if (c1 == EOF) break;
-                    if (c1 == '\n') lineno++;
+                    if (c1 == '\n') linenbr++;
           					if (c1 == '*'){
           					  c2 = input();
                       if (c2 == EOF) break;
-          					  if (c2 == '\n') lineno++;
+          					  if (c2 == '\n') linenbr++;
           					}
                   } while (c1 != '*' || c2 != '/');
                 }
@@ -81,41 +86,54 @@ FILE* source;
   TokenType currentToken;
   if (firstTime)
   { firstTime = FALSE;
-    lineno++;
+    linenbr++;
     yyin = source;
   }
   currentToken = yylex();
   strncpy(tokenString,yytext,MAXTOKENLEN);
   return currentToken;
 }*/
+char escopo[255];
 
-EntradaTabela * escopo = NULL;
 DataType lastDType = VOID;
 char lastId[128];
 void tipoDeclaracao(TokenType tok) {
 
   EntradaTabela * ent;
+  char temp[255];
+  if(strcmp(escopo,"")== 0){
+    strcpy(temp, "global");
+  }else{
+    strcpy(temp, escopo);
+  }
   switch (tok) {
+    DEBUG(printf("FUNC: %s %s();\n", lastId, tokenToString(lastDType));)
     case LPAREN:{
-      //Func
-       ent = criaEntrada( lastId, FUN, lastDType, NULL, lineno );
-       escopo = ent;
+      //Função
+       ent = criaEntrada( lastId, FUN, lastDType, "", linenbr );
+       empilha(lastId);
       break;
     }
     case LBOX:{
+      DEBUG(printf("VET: %s %s[];\n", tokenToString(lastDType), lastId);)
       //VET
-      ent = criaEntrada( lastId, VET, lastDType, escopo, lineno );
+      empilha(lastId);
+      ent = criaEntrada( concatenaPilha(), VET, lastDType, temp, linenbr );
+      desempilha();
       break;
     }
     case SEMI:
     case COLON:
     case RPAREN:{
+      DEBUG(printf("VAR: %s %s;\n", tokenToString(lastDType), lastId);)
       //VAR
-      ent = criaEntrada( lastId, VAR, lastDType, escopo, lineno );
+      empilha(lastId);
+      ent = criaEntrada( concatenaPilha(), VAR, lastDType, temp, linenbr );
+      desempilha();
       break;
     }
     default:{
-      printf("\033[31mError found at line %d: Cannot declare '%s'\033[m\n", lineno, lastId);
+      printf("\033[31mError found at line %d: Cannot declare '%s'\033[m\n", linenbr, lastId);
       return;
       //ERRO!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
@@ -125,24 +143,15 @@ void tipoDeclaracao(TokenType tok) {
 }
 
 void global( TokenType tok ) {
+  // printf("Linha %d: %s\n", linenbr, yytext);
   switch (tok) {
     case ID:{
-      EntradaTabela * ent = NULL;
-      if(escopo != NULL){
-        char temp[256];
-        strcpy(temp, escopo->idName);
-        strcat(temp, yytext);
-        // printf("Buscando por '%s'\n", temp);
-        ent = buscaEntrada(temp);
-      }
-      if( ent == NULL ){
-        // printf("%s + %s\n", escopo->idName, yytext);
-        ent = buscaEntrada(yytext);
-      }
+      EntradaTabela * ent = buscaNaPilha(yytext);
       if(ent != NULL){
-        adicionaLinha(ent, lineno);
+        DEBUG(printf("Adicionando linha %d ao id: '%s'\n", linenbr, ent->idName));
+        adicionaLinha(ent, linenbr);
       }else{
-        printf("\033[31mError found at line %d: '%s' was not declared yet\033[m\n", lineno, yytext);
+        printf("\033[31mError found at line %d: '%s' was not declared yet\033[m\n", linenbr, yytext);
         return;
       }
       break;
@@ -153,28 +162,26 @@ void global( TokenType tok ) {
       lastDType = tok;
       tok = yylex();
       if(lastDType == VOID && tok == RPAREN){
+        DEBUG(printf("func(void)\n");)
         return;
       }
       if(tok != ID ){
-        printf("\033[31mError found at line %d: Expected id but it was %s \033[m\n", lineno, yytext);
+        printf("\033[31mError found at line %d: Expected id but it was %s \033[m\n", linenbr, yytext);
         return;
       }
-      if(escopo != NULL){
-        strcpy(lastId, escopo->idName);
-        strcat(lastId, yytext);
-        // printf("lastIdA = %s\n", lastId);
-      }else{
-        strcpy(lastId, yytext);
-        // printf("lastIdB = %s\n", lastId);
-      }
+      strcpy(lastId,yytext);
+      // DEBUG(printf("ID \'%s\' : \'%s\'\n", lastId, tokenToString(tok)));
+      strcpy(escopo, concatenaPilha());
+      // DEBUG(printf("Escopo : \'%s\'\n", escopo));
       tok = yylex();
+      // DEBUG(printf("\'%s\' : \'%s\'\n", yytext, tokenToString(tok)));
       tipoDeclaracao(tok);
       break;
     }
   }
 }
 
-int pilha = 0;
+int parenCounter = 0;
 
 int main(int argc, char *argv[]) {
   if(argc == 2 ){
@@ -186,26 +193,39 @@ int main(int argc, char *argv[]) {
   int token;
   while ((token=yylex())!=ENDFILE) {
     if(token == ERROR){
-      printf("Error found at line %d: %s\n", lineno, yytext);
+      printf("Error found at line %d: %s\n", linenbr, yytext);
     }else{
       if(token == ID || token == FLOAT || token == INT || token == VOID ){
+        // DEBUG(printf("\'%s\' : \'%s\'\n", yytext, tokenToString(token)));
         global(token);
-        // printf("\'%s\' : \'%s\'\n", yytext, tokenToString(token));
       }else if(token == LKEY){
-        pilha++;
+        parenCounter++;
       }else if(token == RKEY){
-        pilha--;
-        if(pilha < 0){
-          printf("\033[31mUnbalanced parentheses.\033[m\n", lineno, yytext);
+        parenCounter--;
+        desempilha();
+        if(parenCounter < 0){
+          printf("\033[31mUnbalanced parentheses.\033[m\n");
         }
-        else if(pilha == 0){
-          escopo = NULL;
-        }
+      }else if(token == WHILE ){
+        char temp[255] = "while";
+        char buffer[255];
+        snprintf(buffer,16, "%d", whileCounter++);
+        strcat(temp, buffer);
+        // strcpy(lastId,temp);
+        empilha(temp);
+      }else if(token == IF){
+        char temp[255] = "if";
+        char buffer[255];
+        snprintf(buffer,16, "%d", ifCounter++);
+        strcat(temp, buffer);
+        // strcpy(lastId,temp);
+        empilha(temp);
       }
     }
   }
   imprimeTabela(stdout);
   printf("\n\n");
+  apagaTabela();
   return(0);
 }
 

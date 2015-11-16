@@ -9,7 +9,7 @@
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
 #define YY_FLEX_MINOR_VERSION 5
-#define YY_FLEX_SUBMINOR_VERSION 37
+#define YY_FLEX_SUBMINOR_VERSION 35
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -142,7 +142,15 @@ typedef unsigned int flex_uint32_t;
 
 /* Size of default input buffer. */
 #ifndef YY_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k.
+ * Moreover, YY_BUF_SIZE is 2*YY_READ_BUF_SIZE in the general case.
+ * Ditto for the __ia64__ case accordingly.
+ */
+#define YY_BUF_SIZE 32768
+#else
 #define YY_BUF_SIZE 16384
+#endif /* __ia64__ */
 #endif
 
 /* The state buf must be large enough to hold one state per character in the main buffer.
@@ -154,12 +162,7 @@ typedef unsigned int flex_uint32_t;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 #endif
 
-#ifndef YY_TYPEDEF_YY_SIZE_T
-#define YY_TYPEDEF_YY_SIZE_T
-typedef size_t yy_size_t;
-#endif
-
-extern yy_size_t yyleng;
+extern int yyleng;
 
 extern FILE *yyin, *yyout;
 
@@ -185,6 +188,11 @@ extern FILE *yyin, *yyout;
 
 #define unput(c) yyunput( c, (yytext_ptr)  )
 
+#ifndef YY_TYPEDEF_YY_SIZE_T
+#define YY_TYPEDEF_YY_SIZE_T
+typedef size_t yy_size_t;
+#endif
+
 #ifndef YY_STRUCT_YY_BUFFER_STATE
 #define YY_STRUCT_YY_BUFFER_STATE
 struct yy_buffer_state
@@ -202,7 +210,7 @@ struct yy_buffer_state
 	/* Number of characters read into yy_ch_buf, not including EOB
 	 * characters.
 	 */
-	yy_size_t yy_n_chars;
+	int yy_n_chars;
 
 	/* Whether we "own" the buffer - i.e., we know we created it,
 	 * and can realloc() it to grow it, and should free() it to
@@ -272,8 +280,8 @@ static YY_BUFFER_STATE * yy_buffer_stack = 0; /**< Stack as an array. */
 
 /* yy_hold_char holds the character lost when yytext is formed. */
 static char yy_hold_char;
-static yy_size_t yy_n_chars;		/* number of characters read into yy_ch_buf */
-yy_size_t yyleng;
+static int yy_n_chars;		/* number of characters read into yy_ch_buf */
+int yyleng;
 
 /* Points to current character in buffer. */
 static char *yy_c_buf_p = (char *) 0;
@@ -301,7 +309,7 @@ static void yy_init_buffer (YY_BUFFER_STATE b,FILE *file  );
 
 YY_BUFFER_STATE yy_scan_buffer (char *base,yy_size_t size  );
 YY_BUFFER_STATE yy_scan_string (yyconst char *yy_str  );
-YY_BUFFER_STATE yy_scan_bytes (yyconst char *bytes,yy_size_t len  );
+YY_BUFFER_STATE yy_scan_bytes (yyconst char *bytes,int len  );
 
 void *yyalloc (yy_size_t  );
 void *yyrealloc (void *,yy_size_t  );
@@ -502,13 +510,18 @@ char *yytext;
 #line 8 "cmenostabela.l"
 #include "globals.h"
 #include "tabela.h"
-int lineno = 1; /* source line number for listing */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
+int linenbr = 1; /* source line number for listing */
+int whileCounter = 0;
+int ifCounter = 0;
 //#include "util.h"
 //#include "scan.h"
 /* lexeme of identifier or reserved word */
 char tokenString[MAXTOKENLEN+1];
-#line 512 "tabela.c"
+#line 525 "tabela.c"
 
 #define INITIAL 0
 
@@ -547,7 +560,7 @@ FILE *yyget_out (void );
 
 void yyset_out  (FILE * out_str  );
 
-yy_size_t yyget_leng (void );
+int yyget_leng (void );
 
 char *yyget_text (void );
 
@@ -589,7 +602,12 @@ static int input (void );
 
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k */
+#define YY_READ_BUF_SIZE 16384
+#else
 #define YY_READ_BUF_SIZE 8192
+#endif /* __ia64__ */
 #endif
 
 /* Copy whatever the last rule matched to the standard output. */
@@ -690,10 +708,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 27 "cmenostabela.l"
+#line 32 "cmenostabela.l"
 
 
-#line 697 "tabela.c"
+#line 715 "tabela.c"
 
 	if ( !(yy_init) )
 		{
@@ -778,191 +796,191 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 29 "cmenostabela.l"
+#line 34 "cmenostabela.l"
 {return IF;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 30 "cmenostabela.l"
+#line 35 "cmenostabela.l"
 {return ELSE;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 31 "cmenostabela.l"
+#line 36 "cmenostabela.l"
 {return INT;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 32 "cmenostabela.l"
+#line 37 "cmenostabela.l"
 {return FLOAT;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 33 "cmenostabela.l"
+#line 38 "cmenostabela.l"
 {return VOID;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 34 "cmenostabela.l"
+#line 39 "cmenostabela.l"
 {return RETURN;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 35 "cmenostabela.l"
+#line 40 "cmenostabela.l"
 {return WHILE;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 36 "cmenostabela.l"
+#line 41 "cmenostabela.l"
 {return EQ;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 37 "cmenostabela.l"
+#line 42 "cmenostabela.l"
 {return NEQ;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 38 "cmenostabela.l"
+#line 43 "cmenostabela.l"
 {return ASSIGN;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 39 "cmenostabela.l"
+#line 44 "cmenostabela.l"
 {return LT;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 40 "cmenostabela.l"
+#line 45 "cmenostabela.l"
 {return LE;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 41 "cmenostabela.l"
+#line 46 "cmenostabela.l"
 {return GT;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 42 "cmenostabela.l"
+#line 47 "cmenostabela.l"
 {return GE;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 43 "cmenostabela.l"
+#line 48 "cmenostabela.l"
 {return PLUS;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 44 "cmenostabela.l"
+#line 49 "cmenostabela.l"
 {return MINUS;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 45 "cmenostabela.l"
+#line 50 "cmenostabela.l"
 {return TIMES;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 46 "cmenostabela.l"
+#line 51 "cmenostabela.l"
 {return OVER;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 47 "cmenostabela.l"
+#line 52 "cmenostabela.l"
 {return LPAREN;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 48 "cmenostabela.l"
+#line 53 "cmenostabela.l"
 {return RPAREN;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 49 "cmenostabela.l"
+#line 54 "cmenostabela.l"
 {return LBOX;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 50 "cmenostabela.l"
+#line 55 "cmenostabela.l"
 {return RBOX;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 51 "cmenostabela.l"
+#line 56 "cmenostabela.l"
 {return LKEY;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 52 "cmenostabela.l"
+#line 57 "cmenostabela.l"
 {return RKEY;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 53 "cmenostabela.l"
+#line 58 "cmenostabela.l"
 {return SEMI;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 54 "cmenostabela.l"
+#line 59 "cmenostabela.l"
 {return COLON;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 55 "cmenostabela.l"
+#line 60 "cmenostabela.l"
 {return FNUM;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 56 "cmenostabela.l"
+#line 61 "cmenostabela.l"
 {return NUM;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 57 "cmenostabela.l"
+#line 62 "cmenostabela.l"
 {return ID;}
 	YY_BREAK
 case 30:
 /* rule 30 can match eol */
 YY_RULE_SETUP
-#line 58 "cmenostabela.l"
-{lineno++;}
+#line 63 "cmenostabela.l"
+{linenbr++;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 59 "cmenostabela.l"
+#line 64 "cmenostabela.l"
 {/* skip whitespace */}
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 60 "cmenostabela.l"
+#line 65 "cmenostabela.l"
 {return ENDFILE;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 61 "cmenostabela.l"
+#line 66 "cmenostabela.l"
 { char c1,c2;
                   do
                   { c1 = input();
                     if (c1 == EOF) break;
-                    if (c1 == '\n') lineno++;
+                    if (c1 == '\n') linenbr++;
           					if (c1 == '*'){
           					  c2 = input();
                       if (c2 == EOF) break;
-          					  if (c2 == '\n') lineno++;
+          					  if (c2 == '\n') linenbr++;
           					}
                   } while (c1 != '*' || c2 != '/');
                 }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 73 "cmenostabela.l"
+#line 78 "cmenostabela.l"
 {return ERROR;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 75 "cmenostabela.l"
+#line 80 "cmenostabela.l"
 ECHO;
 	YY_BREAK
-#line 966 "tabela.c"
+#line 984 "tabela.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1146,21 +1164,21 @@ static int yy_get_next_buffer (void)
 
 	else
 		{
-			yy_size_t num_to_read =
+			int num_to_read =
 			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
 
 		while ( num_to_read <= 0 )
 			{ /* Not enough room in the buffer - grow it. */
 
 			/* just a shorter name for the current buffer */
-			YY_BUFFER_STATE b = YY_CURRENT_BUFFER_LVALUE;
+			YY_BUFFER_STATE b = YY_CURRENT_BUFFER;
 
 			int yy_c_buf_p_offset =
 				(int) ((yy_c_buf_p) - b->yy_ch_buf);
 
 			if ( b->yy_is_our_buffer )
 				{
-				yy_size_t new_size = b->yy_buf_size * 2;
+				int new_size = b->yy_buf_size * 2;
 
 				if ( new_size <= 0 )
 					b->yy_buf_size += b->yy_buf_size / 8;
@@ -1191,7 +1209,7 @@ static int yy_get_next_buffer (void)
 
 		/* Read in more data. */
 		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
-			(yy_n_chars), num_to_read );
+			(yy_n_chars), (size_t) num_to_read );
 
 		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
 		}
@@ -1286,7 +1304,7 @@ static int yy_get_next_buffer (void)
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 	yy_is_jam = (yy_current_state == 67);
 
-		return yy_is_jam ? 0 : yy_current_state;
+	return yy_is_jam ? 0 : yy_current_state;
 }
 
     static void yyunput (int c, register char * yy_bp )
@@ -1301,7 +1319,7 @@ static int yy_get_next_buffer (void)
 	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
 		{ /* need to shift things up to make room */
 		/* +2 for EOB chars. */
-		register yy_size_t number_to_move = (yy_n_chars) + 2;
+		register int number_to_move = (yy_n_chars) + 2;
 		register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
 					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
 		register char *source =
@@ -1350,7 +1368,7 @@ static int yy_get_next_buffer (void)
 
 		else
 			{ /* need more input */
-			yy_size_t offset = (yy_c_buf_p) - (yytext_ptr);
+			int offset = (yy_c_buf_p) - (yytext_ptr);
 			++(yy_c_buf_p);
 
 			switch ( yy_get_next_buffer(  ) )
@@ -1510,6 +1528,10 @@ static void yy_load_buffer_state  (void)
 	yyfree((void *) b  );
 }
 
+#ifndef __cplusplus
+extern int isatty (int );
+#endif /* __cplusplus */
+    
 /* Initializes or reinitializes a buffer.
  * This function is sometimes called more than once on the same buffer,
  * such as during a yyrestart() or at EOF.
@@ -1622,7 +1644,7 @@ void yypop_buffer_state (void)
  */
 static void yyensure_buffer_stack (void)
 {
-	yy_size_t num_to_alloc;
+	int num_to_alloc;
     
 	if (!(yy_buffer_stack)) {
 
@@ -1719,12 +1741,12 @@ YY_BUFFER_STATE yy_scan_string (yyconst char * yystr )
  * 
  * @return the newly allocated buffer state object.
  */
-YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_len )
+YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, int  _yybytes_len )
 {
 	YY_BUFFER_STATE b;
 	char *buf;
 	yy_size_t n;
-	yy_size_t i;
+	int i;
     
 	/* Get memory for full buffer, including space for trailing EOB's. */
 	n = _yybytes_len + 2;
@@ -1806,7 +1828,7 @@ FILE *yyget_out  (void)
 /** Get the length of the current token.
  * 
  */
-yy_size_t yyget_leng  (void)
+int yyget_leng  (void)
 {
         return yyleng;
 }
@@ -1954,7 +1976,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 75 "cmenostabela.l"
+#line 80 "cmenostabela.l"
 
 
 
@@ -1965,41 +1987,54 @@ FILE* source;
   TokenType currentToken;
   if (firstTime)
   { firstTime = FALSE;
-    lineno++;
+    linenbr++;
     yyin = source;
   }
   currentToken = yylex();
   strncpy(tokenString,yytext,MAXTOKENLEN);
   return currentToken;
 }*/
+char escopo[255];
 
-EntradaTabela * escopo = NULL;
 DataType lastDType = VOID;
 char lastId[128];
 void tipoDeclaracao(TokenType tok) {
 
   EntradaTabela * ent;
+  char temp[255];
+  if(strcmp(escopo,"")== 0){
+    strcpy(temp, "global");
+  }else{
+    strcpy(temp, escopo);
+  }
   switch (tok) {
+    DEBUG(printf("FUNC: %s %s();\n", lastId, tokenToString(lastDType));)
     case LPAREN:{
-      //Func
-       ent = criaEntrada( lastId, FUN, lastDType, NULL, lineno );
-       escopo = ent;
+      //Função
+       ent = criaEntrada( lastId, FUN, lastDType, "", linenbr );
+       empilha(lastId);
       break;
     }
     case LBOX:{
+      DEBUG(printf("VET: %s %s[];\n", tokenToString(lastDType), lastId);)
       //VET
-      ent = criaEntrada( lastId, VET, lastDType, escopo, lineno );
+      empilha(lastId);
+      ent = criaEntrada( concatenaPilha(), VET, lastDType, temp, linenbr );
+      desempilha();
       break;
     }
     case SEMI:
     case COLON:
     case RPAREN:{
+      DEBUG(printf("VAR: %s %s;\n", tokenToString(lastDType), lastId);)
       //VAR
-      ent = criaEntrada( lastId, VAR, lastDType, escopo, lineno );
+      empilha(lastId);
+      ent = criaEntrada( concatenaPilha(), VAR, lastDType, temp, linenbr );
+      desempilha();
       break;
     }
     default:{
-      printf("\033[31mError found at line %d: Cannot declare '%s'\033[m\n", lineno, lastId);
+      printf("\033[31mError found at line %d: Cannot declare '%s'\033[m\n", linenbr, lastId);
       return;
       //ERRO!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
@@ -2009,24 +2044,15 @@ void tipoDeclaracao(TokenType tok) {
 }
 
 void global( TokenType tok ) {
+  // printf("Linha %d: %s\n", linenbr, yytext);
   switch (tok) {
     case ID:{
-      EntradaTabela * ent = NULL;
-      if(escopo != NULL){
-        char temp[256];
-        strcpy(temp, escopo->idName);
-        strcat(temp, yytext);
-        // printf("Buscando por '%s'\n", temp);
-        ent = buscaEntrada(temp);
-      }
-      if( ent == NULL ){
-        // printf("%s + %s\n", escopo->idName, yytext);
-        ent = buscaEntrada(yytext);
-      }
+      EntradaTabela * ent = buscaNaPilha(yytext);
       if(ent != NULL){
-        adicionaLinha(ent, lineno);
+        DEBUG(printf("Adicionando linha %d ao id: '%s'\n", linenbr, ent->idName));
+        adicionaLinha(ent, linenbr);
       }else{
-        printf("\033[31mError found at line %d: '%s' was not declared yet\033[m\n", lineno, yytext);
+        printf("\033[31mError found at line %d: '%s' was not declared yet\033[m\n", linenbr, yytext);
         return;
       }
       break;
@@ -2037,28 +2063,26 @@ void global( TokenType tok ) {
       lastDType = tok;
       tok = yylex();
       if(lastDType == VOID && tok == RPAREN){
+        DEBUG(printf("func(void)\n");)
         return;
       }
       if(tok != ID ){
-        printf("\033[31mError found at line %d: Expected id but it was %s \033[m\n", lineno, yytext);
+        printf("\033[31mError found at line %d: Expected id but it was %s \033[m\n", linenbr, yytext);
         return;
       }
-      if(escopo != NULL){
-        strcpy(lastId, escopo->idName);
-        strcat(lastId, yytext);
-        // printf("lastIdA = %s\n", lastId);
-      }else{
-        strcpy(lastId, yytext);
-        // printf("lastIdB = %s\n", lastId);
-      }
+      strcpy(lastId,yytext);
+      // DEBUG(printf("ID \'%s\' : \'%s\'\n", lastId, tokenToString(tok)));
+      strcpy(escopo, concatenaPilha());
+      // DEBUG(printf("Escopo : \'%s\'\n", escopo));
       tok = yylex();
+      // DEBUG(printf("\'%s\' : \'%s\'\n", yytext, tokenToString(tok)));
       tipoDeclaracao(tok);
       break;
     }
   }
 }
 
-int pilha = 0;
+int parenCounter = 0;
 
 int main(int argc, char *argv[]) {
   if(argc == 2 ){
@@ -2070,26 +2094,39 @@ int main(int argc, char *argv[]) {
   int token;
   while ((token=yylex())!=ENDFILE) {
     if(token == ERROR){
-      printf("Error found at line %d: %s\n", lineno, yytext);
+      printf("Error found at line %d: %s\n", linenbr, yytext);
     }else{
       if(token == ID || token == FLOAT || token == INT || token == VOID ){
+        // DEBUG(printf("\'%s\' : \'%s\'\n", yytext, tokenToString(token)));
         global(token);
-        // printf("\'%s\' : \'%s\'\n", yytext, tokenToString(token));
       }else if(token == LKEY){
-        pilha++;
+        parenCounter++;
       }else if(token == RKEY){
-        pilha--;
-        if(pilha < 0){
-          printf("\033[31mUnbalanced parentheses.\033[m\n", lineno, yytext);
+        parenCounter--;
+        desempilha();
+        if(parenCounter < 0){
+          printf("\033[31mUnbalanced parentheses.\033[m\n");
         }
-        else if(pilha == 0){
-          escopo = NULL;
-        }
+      }else if(token == WHILE ){
+        char temp[255] = "while";
+        char buffer[255];
+        snprintf(buffer,16, "%d", whileCounter++);
+        strcat(temp, buffer);
+        // strcpy(lastId,temp);
+        empilha(temp);
+      }else if(token == IF){
+        char temp[255] = "if";
+        char buffer[255];
+        snprintf(buffer,16, "%d", ifCounter++);
+        strcat(temp, buffer);
+        // strcpy(lastId,temp);
+        empilha(temp);
       }
     }
   }
   imprimeTabela(stdout);
   printf("\n\n");
+  apagaTabela();
   return(0);
 }
 

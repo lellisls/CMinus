@@ -17,6 +17,12 @@
 
 #define MAXTOKENLEN 64
 
+#ifdef DEBUGFLAG
+#define DEBUG( exp ) exp
+#else
+#define DEBUG( exp )
+#endif
+
 typedef enum
   /* book-keeping tokens */
 {

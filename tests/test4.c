@@ -1,4 +1,5 @@
-float raio = 10;
+float raio;
+raio = 10;
 float area = 3.14 * raio * raio;
 int * pt = &area;
 echo $teste
