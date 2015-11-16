@@ -17,5 +17,6 @@ test4: cminus
 	bin/alcminus tests/${@}.c
 
 tabela:
-	gcc ${@}.c -o bin/${@}
-	bin/${@}
+	flex -o ${@}.c cmenostabela.l
+	gcc -o bin/${@} ${@}.c  -lfl
+	bin/${@} tests/test2.c

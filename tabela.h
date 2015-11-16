@@ -10,6 +10,20 @@ typedef TokenType DataType;
 
 typedef enum idtype { VAR, FUN, VET } IdType;
 
+char * idTypeToStr( IdType type ) {
+  switch (type) {
+    case VAR:
+      return("VAR");
+    break;
+    case FUN:
+      return("FUN");
+    break;
+    case VET:
+      return("VET");
+    break;
+  }
+}
+
 typedef struct entradaTab {
   char idName[ 64 ]; /* Nome do id */
   IdType idType; /* Tipo de ID ( Cariável, Função ou Vetor) */
@@ -57,6 +71,15 @@ EntradaTabela* criaEntrada( char idName[ 128 ], IdType idType, DataType dType, E
   return( e );
 }
 
+EntradaTabela * buscaEntrada( char idName[128] ) {
+  int pos = hash(idName);
+  EntradaTabela * e = tabelaSimbolos[pos];
+  while(e != NULL && strcmp(idName, e->idName) ) {
+    e = e->prox;
+  }
+  return e;
+}
+
 int insereNovaEntrada( EntradaTabela *entrada ) {
   int pos = hash( entrada->idName );
   if( tabelaSimbolos[ pos ] == NULL ) {
@@ -72,9 +95,14 @@ int insereNovaEntrada( EntradaTabela *entrada ) {
   return( pos );
 }
 
+void adicionaLinha( EntradaTabela * e, int linha ) {
+  e->linhas[e->nLinhas] = linha;
+  e->nLinhas ++;
+}
+
 void imprimeEntrada( EntradaTabela *entrada ) {
   printf("Entrada '%s':\n", entrada->idName);
-  printf(" - Tipo de ID: %d\n", entrada->idType);
+  printf(" - Tipo de ID: %s\n", idTypeToStr(entrada->idType));
   printf(" - Tipo de Dado: %s\n", tokenToString(entrada->dType));
   if(entrada->escopo != NULL){
     printf(" - Escopo: %s\n", entrada->idName);
@@ -88,16 +116,3 @@ void imprimeEntrada( EntradaTabela *entrada ) {
   printf("\n");
 
 }
-
-/* Estou pensando em usar a mesma estrutura do parser da última aula pra
- * implementar essa tabela de símbolos.
- */
-
-// int main( ) {
-//   EntradaTabela * myFunc  = criaEntrada( "MyFunc", FUN, INT, NULL, 10 );
-//   EntradaTabela * ent = criaEntrada( "HakunaMatata", VAR, INT, myFunc, 10 );
-//   int pos = insereNovaEntrada( ent );
-//   printf( "Entrada '%s'inserida na posição %d\n", ent->idName, pos );
-//   imprimeEntrada(ent);
-//   return( 0 );
-// }

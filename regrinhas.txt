@@ -1,9 +1,9 @@
-global -> { declaracao | DONT CARE}
+global -> { declaracao | ID | DONT CARE}
 declaracao -> idType ID tipoDeclaracao
 tipoDeclaracao -> var | func | vet
 var -> ;
 func -> (
-{ -> muda escopo para ultima declaração de função
+( -> muda escopo para ultima declaraï¿½ï¿½o de funï¿½ï¿½o
 } -> muda escopo para null
 
 vet -> '['
@@ -11,7 +11,7 @@ idType -> FLOAT | VOID | INT
 int var;
 
 int f1(){
-    
+
 }
 
 int var2;
