@@ -10,17 +10,17 @@ typedef TokenType DataType;
 
 typedef enum idtype { VAR, FUN, VET } IdType;
 
-char * idTypeToStr( IdType type ) {
-  switch (type) {
-    case VAR:
-      return("VAR");
-    break;
-    case FUN:
-      return("FUN");
-    break;
-    case VET:
-      return("VET");
-    break;
+char* idTypeToStr( IdType type ) {
+  switch( type ) {
+      case VAR:
+      return( "VAR" );
+      break;
+      case FUN:
+      return( "FUN" );
+      break;
+      case VET:
+      return( "VET" );
+      break;
   }
 }
 
@@ -71,13 +71,13 @@ EntradaTabela* criaEntrada( char idName[ 128 ], IdType idType, DataType dType, E
   return( e );
 }
 
-EntradaTabela * buscaEntrada( char idName[128] ) {
-  int pos = hash(idName);
-  EntradaTabela * e = tabelaSimbolos[pos];
-  while(e != NULL && strcmp(idName, e->idName) ) {
+EntradaTabela* buscaEntrada( char idName[ 128 ] ) {
+  int pos = hash( idName );
+  EntradaTabela *e = tabelaSimbolos[ pos ];
+  while( e != NULL && strcmp( idName, e->idName ) ) {
     e = e->prox;
   }
-  return e;
+  return( e );
 }
 
 int insereNovaEntrada( EntradaTabela *entrada ) {
@@ -95,24 +95,51 @@ int insereNovaEntrada( EntradaTabela *entrada ) {
   return( pos );
 }
 
-void adicionaLinha( EntradaTabela * e, int linha ) {
-  e->linhas[e->nLinhas] = linha;
-  e->nLinhas ++;
+void adicionaLinha( EntradaTabela *e, int linha ) {
+  e->linhas[ e->nLinhas ] = linha;
+  e->nLinhas++;
 }
 
 void imprimeEntrada( EntradaTabela *entrada ) {
-  printf("Entrada '%s':\n", entrada->idName);
-  printf(" - Tipo de ID: %s\n", idTypeToStr(entrada->idType));
-  printf(" - Tipo de Dado: %s\n", tokenToString(entrada->dType));
-  if(entrada->escopo != NULL){
-    printf(" - Escopo: %s\n", entrada->idName);
-  }else{
-    printf(" - Escopo: GLOBAL\n");
+  printf( "Entrada '%s':\n", entrada->idName );
+  printf( " - Tipo de ID: %s\n", idTypeToStr( entrada->idType ) );
+  printf( " - Tipo de Dado: %s\n", tokenToString( entrada->dType ) );
+  if( entrada->escopo != NULL ) {
+    printf( " - Escopo: %s\n", entrada->idName );
   }
-  printf(" - Linhas: ");
-  for(int i = 0; i < entrada->nLinhas; ++i){
-    printf("%d ", entrada->linhas[i]);
+  else {
+    printf( " - Escopo: GLOBAL\n" );
   }
-  printf("\n");
-
+  printf( " - Linhas: " );
+  for( int i = 0; i < entrada->nLinhas; ++i ) {
+    printf( "%d ", entrada->linhas[ i ] );
+  }
+  printf( "\n" );
 }
+
+void imprimeTabela( FILE *listing ) {
+  int i;
+  fprintf( listing, "\nNome variavel  Tipo ID  Tipo Dado  Escopo         Nro das Linhas\n" );
+  fprintf( listing, "-------------  -------  ---------  -------------  --------------\n" );
+  for( i = 0; i < SIZE; ++i ) {
+    EntradaTabela *l = tabelaSimbolos[ i ];
+    if( l != NULL ) {
+      while( l != NULL ) {
+        fprintf( listing, "%-14s ", l->idName );
+        fprintf( listing, "%-9s", idTypeToStr( l->idType ) );
+        fprintf( listing, "%-11s", tokenToString( l->dType ) );
+        char * escopo = "GLOBAL";
+        if( l->escopo != NULL ) {
+          escopo = l->escopo->idName;
+        }
+        fprintf( listing, "%-15s", escopo );
+                /* fprintf(listing,"%-8d  ",l->memloc); */
+        for( int i = 0; i < l->nLinhas; ++i ) {
+          fprintf( listing, "%d ", l->linhas[ i ] );
+        }
+        fprintf( listing, "\n" );
+        l = l->prox;
+      }
+    }
+  }
+} /* printSymTab */

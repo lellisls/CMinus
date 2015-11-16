@@ -1,22 +1,35 @@
-cminus:
+scanner:
 	flex cminus.l
-	gcc -o bin/alcminus lex.yy.c  -lfl
+	gcc -o bin/scanner lex.yy.c  -lfl
 
-tests: test1 test2 test3 test4
+scanner-tests: scanner-test1 scanner-test2 scanner-test3 scanner-test4
 
-test1: cminus
-	bin/alcminus tests/${@}.c
+scanner-test1: scanner
+	bin/scanner tests/test1.c
 
-test2: cminus
-	bin/alcminus tests/${@}.c
+scanner-test2: scanner
+	bin/scanner tests/test2.c
 
-test3: cminus
-	bin/alcminus tests/${@}.c
+scanner-test3: scanner
+	bin/scanner tests/test3.c
 
-test4: cminus
-	bin/alcminus tests/${@}.c
+scanner-test4: scanner
+	bin/scanner tests/test4.c
 
 tabela:
 	flex -o ${@}.c cmenostabela.l
 	gcc -o bin/${@} ${@}.c  -lfl
-	bin/${@} tests/test2.c
+
+tabela-tests: tabela-test1 tabela-test2 tabela-test3 tabela-test4
+
+tabela-test1: tabela
+	bin/tabela tests/test1.c
+
+tabela-test2: tabela
+	bin/tabela tests/test2.c
+
+tabela-test3: tabela
+	bin/tabela tests/test3.c
+
+tabela-test4: tabela
+	bin/tabela tests/test4.c

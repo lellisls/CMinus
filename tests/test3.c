@@ -21,7 +21,7 @@
    { int i; int k;
      i = low;
 	 while (i < high - 1)
-	 { int t
+	 { int t;
 	   k = minloc(a, i, high);
 	   t = a[k];
 	   a[k] = a[i];
@@ -43,4 +43,3 @@
 	   i = i + 1;
 	 }
    }
-		 

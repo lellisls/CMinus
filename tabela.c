@@ -1989,7 +1989,6 @@ void tipoDeclaracao(TokenType tok) {
     case LBOX:{
       //VET
       ent = criaEntrada( lastId, VET, lastDType, escopo, lineno );
-      escopo = ent;
       break;
     }
     case SEMI:
@@ -2000,31 +1999,34 @@ void tipoDeclaracao(TokenType tok) {
       break;
     }
     default:{
-      printf("\033[1mError found at line %d: cannot declare '%s'\033[m\n", lineno, yytext);
+      printf("\033[31mError found at line %d: Cannot declare '%s'\033[m\n", lineno, lastId);
       return;
       //ERRO!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
   }
-  imprimeEntrada(ent);
+  // imprimeEntrada(ent);
   insereNovaEntrada(ent);
 }
 
 void global( TokenType tok ) {
   switch (tok) {
     case ID:{
-      EntradaTabela * ent = buscaEntrada(yytext);
-      if( ent == NULL && escopo != NULL){
-        printf("%s + %s\n", escopo->idName, yytext);
-        char temp[128];
+      EntradaTabela * ent = NULL;
+      if(escopo != NULL){
+        char temp[256];
         strcpy(temp, escopo->idName);
         strcat(temp, yytext);
-        printf("Buscando por '%s'\n", temp);
+        // printf("Buscando por '%s'\n", temp);
         ent = buscaEntrada(temp);
+      }
+      if( ent == NULL ){
+        // printf("%s + %s\n", escopo->idName, yytext);
+        ent = buscaEntrada(yytext);
       }
       if(ent != NULL){
         adicionaLinha(ent, lineno);
       }else{
-        printf("\033[1mError found at line %d: '%s' was not declared yet\033[m\n", lineno, yytext);
+        printf("\033[31mError found at line %d: '%s' was not declared yet\033[m\n", lineno, yytext);
         return;
       }
       break;
@@ -2038,15 +2040,16 @@ void global( TokenType tok ) {
         return;
       }
       if(tok != ID ){
-        printf("\033[1mError found at line %d: Expected id but it was %s \033[m\n", lineno, yytext);
+        printf("\033[31mError found at line %d: Expected id but it was %s \033[m\n", lineno, yytext);
         return;
       }
       if(escopo != NULL){
         strcpy(lastId, escopo->idName);
         strcat(lastId, yytext);
+        // printf("lastIdA = %s\n", lastId);
       }else{
         strcpy(lastId, yytext);
-        printf("lastId = %s\n", yytext);
+        // printf("lastIdB = %s\n", lastId);
       }
       tok = yylex();
       tipoDeclaracao(tok);
@@ -2054,6 +2057,8 @@ void global( TokenType tok ) {
     }
   }
 }
+
+int pilha = 0;
 
 int main(int argc, char *argv[]) {
   if(argc == 2 ){
@@ -2070,11 +2075,21 @@ int main(int argc, char *argv[]) {
       if(token == ID || token == FLOAT || token == INT || token == VOID ){
         global(token);
         // printf("\'%s\' : \'%s\'\n", yytext, tokenToString(token));
+      }else if(token == LKEY){
+        pilha++;
       }else if(token == RKEY){
-        escopo = NULL;
+        pilha--;
+        if(pilha < 0){
+          printf("\033[31mUnbalanced parentheses.\033[m\n", lineno, yytext);
+        }
+        else if(pilha == 0){
+          escopo = NULL;
+        }
       }
     }
   }
+  imprimeTabela(stdout);
+  printf("\n\n");
   return(0);
 }
 
