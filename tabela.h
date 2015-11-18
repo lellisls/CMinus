@@ -25,7 +25,8 @@ char* idTypeToStr( IdType type ) {
 }
 
 typedef struct entradaTab {
-  char idName[ 64 ]; /* Nome do id */
+  char idName[ 256 ]; /* Nome do id para calculo do hash */
+  char idVarName [ 256 ]; /* Nome da variavel */
   IdType idType; /* Tipo de ID ( Cariável, Função ou Vetor) */
   DataType dType; /* Tipo de dado (int, float ou void) */
   char escopo[255]; /* Escopo (apenas para variavel e vetor) */
@@ -62,9 +63,10 @@ void apagaTabela( ) {
   }
 }
 
-EntradaTabela* criaEntrada( char idName[ 256 ], IdType idType, DataType dType, char escopo[255], int linha ) {
+EntradaTabela* criaEntrada( char idName[ 256 ], char idVarName[ 256 ], IdType idType, DataType dType, char escopo[255], int linha ) {
   EntradaTabela *e = ( EntradaTabela* ) malloc( sizeof( EntradaTabela ) );
   strcpy( e->idName, idName );
+  strcpy( e->idVarName, idVarName );
   e->idType = idType;
   e->dType = dType;
   strcpy(e->escopo, escopo);
@@ -106,8 +108,8 @@ void inicializaTabela( ) {
   for( int i = 0; i < SIZE; ++i ) {
     tabelaSimbolos[ i ] = NULL;
   }
-  insereNovaEntrada( criaEntrada("input",FUN,VOID,"global",-1) );
-  insereNovaEntrada( criaEntrada("output",FUN,VOID,"global",-1) );
+  insereNovaEntrada( criaEntrada("input","input",FUN,VOID,"",-1) );
+  insereNovaEntrada( criaEntrada("output","output",FUN,VOID,"",-1) );
 }
 
 void adicionaLinha( EntradaTabela *e, int linha ) {
@@ -135,7 +137,7 @@ void imprimeTabela( FILE *listing ) {
     EntradaTabela *l = tabelaSimbolos[ i ];
     if( l != NULL ) {
       while( l != NULL ) {
-        fprintf( listing, "%-14s ", l->idName );
+        fprintf( listing, "%-14s ", l->idVarName );
         fprintf( listing, "%-9s", idTypeToStr( l->idType ) );
         fprintf( listing, "%-11s", tokenToString( l->dType ) );
         fprintf( listing, "%-15s", l->escopo );

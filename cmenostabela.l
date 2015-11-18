@@ -111,7 +111,7 @@ void tipoDeclaracao(TokenType tok) {
     DEBUG(printf("FUNC: %s %s();\n", lastId, tokenToString(lastDType));)
     case LPAREN:{
       //Função
-       ent = criaEntrada( lastId, FUN, lastDType, "", linenbr );
+       ent = criaEntrada( lastId, lastId, FUN, lastDType, "", linenbr );
        empilha(lastId);
       break;
     }
@@ -119,7 +119,7 @@ void tipoDeclaracao(TokenType tok) {
       DEBUG(printf("VET: %s %s[];\n", tokenToString(lastDType), lastId);)
       //VET
       empilha(lastId);
-      ent = criaEntrada( concatenaPilha(), VET, lastDType, temp, linenbr );
+      ent = criaEntrada( concatenaPilha(), lastId, VET, lastDType, temp, linenbr );
       desempilha();
       break;
     }
@@ -129,7 +129,7 @@ void tipoDeclaracao(TokenType tok) {
       DEBUG(printf("VAR: %s %s;\n", tokenToString(lastDType), lastId);)
       //VAR
       empilha(lastId);
-      ent = criaEntrada( concatenaPilha(), VAR, lastDType, temp, linenbr );
+      ent = criaEntrada( concatenaPilha(), lastId, VAR, lastDType, temp, linenbr );
       desempilha();
       break;
     }
@@ -204,28 +204,12 @@ int main(int argc, char *argv[]) {
         parenCounter++;
       }else if(token == RKEY){
         parenCounter--;
-        desempilha();
+        if(parenCounter == 0){
+          desempilha();
+        }
         if(parenCounter < 0){
           printf("\033[31mUnbalanced parentheses.\033[m\n");
         }
-      }else if(token == WHILE ){
-        char temp[255] = "while";
-        char buffer[255];
-        snprintf(buffer,16, "%d", whileCounter++);
-        strcat(temp, buffer);
-        empilha(temp);
-      }else if(token == IF){
-        char temp[255] = "if";
-        char buffer[255];
-        snprintf(buffer,16, "%d", ifCounter++);
-        strcat(temp, buffer);
-        empilha(temp);
-      }else if(token == ELSE){
-        char temp[255] = "else";
-        char buffer[255];
-        snprintf(buffer,16, "%d", elseCounter++);
-        strcat(temp, buffer);
-        empilha(temp);
       }
     }
   }
