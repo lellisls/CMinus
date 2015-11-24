@@ -6,7 +6,7 @@ ifeq ($(debug), 1)
 endif
 
 scanner:
-	@flex cminus.l
+	@flex lex/cminus.l
 	@gcc $(CFLAGS) -std=gnu99 -o bin/scanner lex.yy.c  -lfl
 
 scanner-tests: scanner-test1 scanner-test2 scanner-test3 scanner-test4
@@ -24,7 +24,7 @@ scanner-test4: scanner
 	@bin/scanner tests/test4.c
 
 tabela:
-	@flex -o ${@}.c cmenostabela.l
+	@flex -o ${@}.c lex/cmenostabela.l
 	@gcc $(CFLAGS) -std=gnu99 -o bin/${@} ${@}.c  -lfl
 
 tabela-tests: tabela-test1 tabela-test2 tabela-test3 tabela-test4
