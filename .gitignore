@@ -4,4 +4,7 @@ tabela.c
 *.tab.h
 *.tab.c
 *.ps
+*.dot
+*.output
+objs/*
 scanner.c

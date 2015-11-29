@@ -18,11 +18,24 @@ scanner.o: parser.o
 	@gcc $(CFLAGS) -std=gnu99 -c scanner.c -o objs/scanner.o
 
 view:
-	dot -Tps calc.dot -o graph.ps; evince graph.ps
+	dot -Tps parser.dot -o graph.ps; evince graph.ps
 
 parser: scanner.o
 	@g++ $(CFLAGS) -std=c++11 objs/* -o bin/$@ -ly -lfl
-	bin/$@
+
+parser-tests: parser-test1 parser-test2 parser-test3
+
+parser-test1: parser
+	bin/parser tests/test1.c
+
+parser-test2: parser
+	bin/parser tests/test2.c
+
+parser-test3: parser
+	bin/parser tests/test3.c
+
+parser-test4: parser
+	bin/parser tests/test4.c
 
 clean:
 	rm -f objs/* bin/* *.tab.c *.tab.h scanner.c

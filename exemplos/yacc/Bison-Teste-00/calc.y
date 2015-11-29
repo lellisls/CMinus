@@ -5,12 +5,14 @@ void yyerror(char *);
 extern "C"
 {
   int yylex();
-  void abrirArq(); 
+  void abrirArq();
 }
 %}
 
 %start entrada
 %token NUM ERRO FIMLIN
+
+spaco [ \t]+
 
 %%
 
@@ -20,15 +22,15 @@ entrada :	/* entrada vazia */
 lin	:	FIMLIN
 	|	exp FIMLIN
 	;
-exp	:	exp '+' termo 	
-	|	exp '-' termo 	
-	|	termo 		
+exp	:	exp '+' termo
+	|	exp '-' termo
+	|	termo
 	;
-termo	:	termo '*' fator	
-	|	fator	
+termo	:	termo '*' fator
+	|	fator
 	;
-fator	:	'('exp')'	
-	|	NUM 		
+fator	:	'('exp')'
+	|	NUM
 	;
 %%
 
@@ -47,4 +49,3 @@ void yyerror(char * msg)
   extern int linha;
   printf("\n%s : %s  Linha: %d\n", msg, yytext, linha);
 }
-

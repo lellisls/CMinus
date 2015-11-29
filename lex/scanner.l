@@ -4,6 +4,8 @@
 /* Lucas Lellis, Maira Tayana Menegas               */
 /****************************************************/
 
+/*yyrestart*/
+
 %{
 #include "parser.tab.h"
 #include "globals.h"
@@ -38,11 +40,11 @@ OUTRO       [^0-9a-zA-Z;/=\-"+""*""("")""!"">""<""{""}""[""\]"","\n]
 
 "if"            {return IF;}
 "else"          {return ELSE;}
-"int"		{return INT;}
-"float"		{return FLOAT;}
-"void"		{return VOID;}
-"return"	{return RETURN;}
-"while"		{return WHILE;}
+"int"           {return INT;}
+"float"         {return FLOAT;}
+"void"          {return VOID;}
+"return"        {return RETURN;}
+"while"         {return WHILE;}
 "=="            {return EQ;}
 "!="            {return NEQ;}
 "="             {return ASSIGN;}
@@ -62,12 +64,11 @@ OUTRO       [^0-9a-zA-Z;/=\-"+""*""("")""!"">""<""{""}""[""\]"","\n]
 "}"             {return RKEY;}
 ";"             {return SEMI;}
 ","             {return COLON;}
-{fnum}		    {return FNUM;}
+{fnum}          {return FNUM;}
 {number}        {return NUM;}
 {identifier}    {return ID;}
 {newline}       {linenbr++;}
 {whitespace}    {/* skip whitespace */}
-<<EOF>>         {return ENDFILE;}
 "/*"             { char c1,c2;
                   do
                   { c1 = input();

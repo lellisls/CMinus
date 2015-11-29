@@ -49,4 +49,3 @@ void yyerror(char * msg)
   extern int linha;
   cout << msg << ": " << yytext << " Linha: " << linha << endl;
 }
-

@@ -6,6 +6,7 @@ int gcd (int u, int v)
    else return gcd(v,u-u/v*v);
    /* u-u/v*v == u mod v */
 }
+/* val = 3.13; */
 void main(void)
 { int x; int y;
   x = input(); y = input();

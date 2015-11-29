@@ -14,13 +14,16 @@ extern "C"
 %token ID NUM FNUM
 %token ASSIGN EQ NEQ LT LE GT GE PLUS MINUS
 %token TIMES OVER LPAREN RPAREN SEMI COLON
-%token LBOX RBOX LKEY RKEY LCOMM RCOMM
-%token ENDFILE ERROR
+%token LBOX RBOX LKEY RKEY
+%token ERROR
 
+%printer { fprintf (yyoutput, "’%d’", $$); } NUM
+%nonassoc "then"
+%nonassoc ELSE
 %%
 
 programa :	/* entrada vazia */
-	| 	declaracao-lista
+	| declaracao-lista
 	;
 declaracao-lista	:	declaracao-lista declaracao
 	|	declaracao
@@ -63,7 +66,7 @@ statement : expressao-decl
 expressao-decl : expressao SEMI
   | SEMI
   ;
-selecao-decl : IF LPAREN expressao RPAREN statement
+selecao-decl : IF LPAREN expressao RPAREN statement %prec "then"
   | IF LPAREN expressao RPAREN statement ELSE statement
   ;
 iteracao-decl : WHILE LPAREN expressao RPAREN statement
@@ -103,6 +106,7 @@ fator : LPAREN expressao RPAREN
   | var
   | ativacao
   | NUM
+  | FNUM
   ;
 ativacao : ID LPAREN args RPAREN
   ;
@@ -116,7 +120,7 @@ arg-lista : arg-lista COLON expressao
 
 int main(int argc, char ** argv)
 {
-  if(argc == 2){
+  if(argc != 2){
     printf("usage: %s <source code>\n", argv[0]);
     exit(1);
   }
