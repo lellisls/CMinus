@@ -1,5 +1,0 @@
-bin/*
-*lex.yy.c
-*tabela.c
-*.tab.h
-*.tab.c

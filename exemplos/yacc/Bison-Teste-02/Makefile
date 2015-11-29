@@ -11,3 +11,6 @@ bison:
 	@gcc $(CFLAGS) -std=gnu99 -c lex.yy.c
 	@g++ $(CFLAGS) -std=c++11 -o bin/calc lex.yy.o calc.tab.c -ly -lfl
 	@bin/calc
+
+view:
+	dot -Tps calc.dot -o graph.ps; evince graph.ps
