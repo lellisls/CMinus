@@ -5,11 +5,15 @@
 /****************************************************/
 
 %{
+#include "parser.tab.h"
 #include "globals.h"
-#include "tabela.h"
+// #include "tabela.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+extern YYSTYPE yylval;
+void abrirArq(char * fileName);
 
 int linenbr = 1; /* source line number for listing */
 int whileCounter = 0;
@@ -82,112 +86,10 @@ OUTRO       [^0-9a-zA-Z;/=\-"+""*""("")""!"">""<""{""}""[""\]"","\n]
 
 FILE* source;
 
-/*TokenType getToken(void)
-{ static int firstTime = TRUE;
-  TokenType currentToken;
-  if (firstTime)
-  { firstTime = FALSE;
-    linenbr++;
-    yyin = source;
-  }
-  currentToken = yylex();
-  strncpy(tokenString,yytext,MAXTOKENLEN);
-  return currentToken;
-}*/
-char escopo[255];
 
-DataType lastDType = VOID;
-char lastId[128];
-void tipoDeclaracao(TokenType tok) {
-
-  EntradaTabela * ent;
-  char temp[255];
-  if(strcmp(escopo,"")== 0){
-    strcpy(temp, "global");
-  }else{
-    strcpy(temp, escopo);
-  }
-  switch (tok) {
-    DEBUG(printf("FUNC: %s %s();\n", lastId, tokenToString(lastDType));)
-    case LPAREN:{
-      //Função
-       ent = criaEntrada( lastId, lastId, FUN, lastDType, "", linenbr );
-       empilha(lastId);
-      break;
-    }
-    case LBOX:{
-      DEBUG(printf("VET: %s %s[];\n", tokenToString(lastDType), lastId);)
-      //VET
-      empilha(lastId);
-      ent = criaEntrada( concatenaPilha(), lastId, VET, lastDType, temp, linenbr );
-      desempilha();
-      break;
-    }
-    case SEMI:
-    case COLON:
-    case RPAREN:{
-      DEBUG(printf("VAR: %s %s;\n", tokenToString(lastDType), lastId);)
-      //VAR
-      empilha(lastId);
-      ent = criaEntrada( concatenaPilha(), lastId, VAR, lastDType, temp, linenbr );
-      desempilha();
-      break;
-    }
-    default:{
-      printf("\033[31mError found at line %d: Cannot declare '%s'\033[m\n", linenbr, lastId);
-      return;
-      //ERRO!!!!!!!!!!!!!!!!!!!!!!!!!!
-    }
-  }
-  // imprimeEntrada(ent);
-  insereNovaEntrada(ent);
-}
-
-void global( TokenType tok ) {
-  // printf("Linha %d: %s\n", linenbr, yytext);
-  switch (tok) {
-    case ID:{
-      EntradaTabela * ent = buscaNaPilha(yytext);
-      if(ent != NULL){
-        DEBUG(printf("Adicionando linha %d ao id: '%s'\n", linenbr, ent->idName));
-        adicionaLinha(ent, linenbr);
-      }else{
-        printf("\033[31mError found at line %d: '%s' was not declared yet\033[m\n", linenbr, yytext);
-        return;
-      }
-      break;
-    }
-    case FLOAT:
-    case INT:
-    case VOID:{
-      lastDType = tok;
-      tok = yylex();
-      if(lastDType == VOID && tok == RPAREN){
-        DEBUG(printf("func(void)\n");)
-        return;
-      }
-      if(tok != ID ){
-        printf("\033[31mError found at line %d: Expected id but it was %s \033[m\n", linenbr, yytext);
-        return;
-      }
-      strcpy(lastId,yytext);
-      // DEBUG(printf("ID \'%s\' : \'%s\'\n", lastId, tokenToString(tok)));
-      strcpy(escopo, concatenaPilha());
-      // DEBUG(printf("Escopo : \'%s\'\n", escopo));
-      tok = yylex();
-      // DEBUG(printf("\'%s\' : \'%s\'\n", yytext, tokenToString(tok)));
-      tipoDeclaracao(tok);
-      break;
-    }
-  }
-}
-
-int parenCounter = 0;
-
-int main(int argc, char *argv[]) {
+/*int main(int argc, char *argv[]) {
   if(argc == 2 ){
-    if(source = fopen(argv[1],"r"))  yyin = source;
-    else  perror(argv[0]);
+
   }else{
     yyin = stdin;
   }
@@ -217,6 +119,13 @@ int main(int argc, char *argv[]) {
   printf("\n\n");
   apagaTabela();
   return(0);
+}*/
+
+void abrirArq(char * fileName){
+  if(source = fopen(fileName,"r"))
+    yyin = source;
+  else
+    printf("Could not open file %s\n", fileName);
 }
 
 /*int main( ) {
