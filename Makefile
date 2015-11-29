@@ -1,42 +1,21 @@
 
 debug ?= 0
-
 ifeq ($(debug), 1)
-	CFLAGS=-g -DDEBUGFLAG
+	CFLAGS=-g -DDEBUGFLAG -Wwrite-strings
+	BFLAGS=-v -g
 endif
 
-scanner:
-	@flex lex/cminus.l
-	@gcc $(CFLAGS) -std=gnu99 -o bin/scanner lex.yy.c  -lfl
+bison: scanner.o
+	@g++ $(CFLAGS) -std=c++11 -o bin/calc objs/* main.cpp -ly -lfl
+	@bin/calc
 
-scanner-tests: scanner-test1 scanner-test2 scanner-test3 scanner-test4
+scanner.o:
+	@flex -o scanner.c lex/scanner.l
+	@gcc $(CFLAGS) -std=gnu99 -c scanner.c -o objs/lex.yy.o
 
-scanner-test1: scanner
-	@bin/scanner tests/test1.c
+parser.o:
+	@bison -d $(BFLAGS) yacc/paser.y
+	@g++ $(CFLAGS) -std=c++11 -c parser.c -o objs/parser.o
 
-scanner-test2: scanner
-	@bin/scanner tests/test2.c
-
-scanner-test3: scanner
-	@bin/scanner tests/test3.c
-
-scanner-test4: scanner
-	@bin/scanner tests/test4.c
-
-tabela:
-	@flex -o ${@}.c lex/cmenostabela.l
-	@gcc $(CFLAGS) -std=gnu99 -o bin/${@} ${@}.c  -lfl
-
-tabela-tests: tabela-test1 tabela-test2 tabela-test3 tabela-test4
-
-tabela-test1: tabela
-	@bin/tabela tests/test1.c
-
-tabela-test2: tabela
-	@bin/tabela tests/test2.c
-
-tabela-test3: tabela
-	@bin/tabela tests/test3.c
-
-tabela-test4: tabela
-	@bin/tabela tests/test4.c
+view:
+	dot -Tps calc.dot -o graph.ps; evince graph.ps

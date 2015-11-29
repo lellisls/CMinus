@@ -1,5 +1,7 @@
 bin/*
-*lex.yy.c
-*tabela.c
+lex.yy.c
+tabela.c
 *.tab.h
 *.tab.c
+*.ps
+scanner.c
