@@ -19,3 +19,6 @@ parser.o:
 
 view:
 	dot -Tps calc.dot -o graph.ps; evince graph.ps
+
+parser: scanner.o
+	@g++ $(CFLAGS) -std=c++11 parser.c objs/* -o objs/parser

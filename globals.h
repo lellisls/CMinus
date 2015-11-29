@@ -23,21 +23,7 @@
 #define DEBUG( exp )
 #endif
 
-typedef enum
-  /* book-keeping tokens */
-{
-  ENDFILE, ERROR,
-  /* reserved words */
-  IF, ELSE, INT, FLOAT, VOID, RETURN, WHILE,
-  /* multicharacter tokens */
-  ID, NUM, FNUM,
-  /* special symbols */
-  ASSIGN, EQ, NEQ, LT, LE, GT, GE, PLUS, MINUS,
-  TIMES, OVER, LPAREN, RPAREN, SEMI, COLON,
-  LBOX, RBOX, LKEY, RKEY, LCOMM, RCOMM,
-} TokenType;
-
-char* tokenToString( TokenType type ) {
+char* tokenToString( int type ) {
   switch( type ) {
       case ENDFILE:
       return( "ENDFILE" );
