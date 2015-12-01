@@ -23,7 +23,7 @@ view:
 parser: scanner.o
 	@g++ $(CFLAGS) -std=c++11 objs/* -o bin/$@ -ly -lfl
 
-parser-tests: parser-test1 parser-test2 parser-test3
+parser-tests: parser-test1 parser-test2 parser-test3 parser-test4
 
 parser-test1: parser
 	bin/parser tests/test1.c

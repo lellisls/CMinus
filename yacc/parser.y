@@ -1,7 +1,7 @@
 %{
 //GLC para gerar parser para calculadora simples
 #include <stdio.h>
-void yyerror(char *);
+void yyerror(const char *);
 extern "C"
 {
   int yylex();
@@ -16,7 +16,7 @@ extern "C"
 %token TIMES OVER LPAREN RPAREN SEMI COLON
 %token LBOX RBOX LKEY RKEY
 %token ERROR
-
+%error-verbose
 %printer { fprintf (yyoutput, "’%d’", $$); } NUM
 %nonassoc "then"
 %nonassoc ELSE
@@ -115,7 +115,7 @@ args : arg-lista
   ;
 arg-lista : arg-lista COLON expressao
   | expressao
-
+  ;
 %%
 
 int main(int argc, char ** argv)
@@ -130,9 +130,13 @@ int main(int argc, char ** argv)
   else printf("\nAnálise sintática apresenta ERRO\n");
   return 0;
 }
-void yyerror(char * msg)
+void yyerror(const char * msg)
 {
   extern char* yytext;
   extern int linenbr;
-  printf("\n%s : %s  Linha: %d\n", msg, yytext, linenbr);
+  if(yychar == ERROR){
+    printf("\nLexical error : %s  Line: %d\n", yytext, linenbr);
+  }else{
+    printf("\n%s : %s  Line: %d\n", msg, yytext, linenbr);
+  }
 }

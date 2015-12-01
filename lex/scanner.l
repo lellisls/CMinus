@@ -18,9 +18,9 @@ extern YYSTYPE yylval;
 void abrirArq(char * fileName);
 
 int linenbr = 1; /* source line number for listing */
-int whileCounter = 0;
-int ifCounter = 0;
-int elseCounter = 0;
+//int whileCounter = 0;
+//int ifCounter = 0;
+//int elseCounter = 0;
 //#include "util.h"
 //#include "scan.h"
 /* lexeme of identifier or reserved word */
