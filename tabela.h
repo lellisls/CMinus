@@ -1,16 +1,18 @@
 #include "globals.h"
 #include <stdio.h>
 #include <string.h>
+#include "parser.tab.h"
+
 
 #define SIZE 211 /* número primo para melhorar a distribuição */
 /* em uma tabela de hashing com até 211 registros */
 #define SHIFT 4
 
-typedef TokenType DataType;
+typedef int DataType;
 
 typedef enum idtype { VAR, FUN, VET } IdType;
 
-char* idTypeToStr( IdType type ) {
+const char* idTypeToStr( IdType type ) {
   switch( type ) {
       case VAR:
       return( "VAR" );
@@ -63,7 +65,7 @@ void apagaTabela( ) {
   }
 }
 
-EntradaTabela* criaEntrada( char idName[ 256 ], char idVarName[ 256 ], IdType idType, DataType dType, char escopo[255], int linha ) {
+EntradaTabela* criaEntrada( const char idName[ 256 ], const char idVarName[ 256 ], IdType idType, DataType dType, const char escopo[255], int linha ) {
   EntradaTabela *e = ( EntradaTabela* ) malloc( sizeof( EntradaTabela ) );
   strcpy( e->idName, idName );
   strcpy( e->idVarName, idVarName );
@@ -183,7 +185,7 @@ void desempilha(){
   }
 }
 
-char * topoPilha(){
+const char * topoPilha(){
   return pilha[tamanhoPilha-1];
 }
 

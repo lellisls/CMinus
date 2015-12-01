@@ -16,7 +16,6 @@
 
 extern YYSTYPE yylval;
 void abrirArq(char * fileName);
-
 int linenbr = 1; /* source line number for listing */
 //int whileCounter = 0;
 //int ifCounter = 0;
@@ -82,58 +81,14 @@ OUTRO       [^0-9a-zA-Z;/=\-"+""*""("")""!"">""<""{""}""[""\]"","\n]
                   } while (c1 != '*' || c2 != '/');
                 }
 {OUTRO}+        {return ERROR;}
-
 %%
 
 FILE* source;
-
-
-/*int main(int argc, char *argv[]) {
-  if(argc == 2 ){
-
-  }else{
-    yyin = stdin;
-  }
-  inicializaTabela( );
-  int token;
-  while ((token=yylex())!=ENDFILE) {
-    if(token == ERROR){
-      printf("Error found at line %d: %s\n", linenbr, yytext);
-    }else{
-      if(token == ID || token == FLOAT || token == INT || token == VOID ){
-        // DEBUG(printf("\'%s\' : \'%s\'\n", yytext, tokenToString(token)));
-        global(token);
-      }else if(token == LKEY){
-        parenCounter++;
-      }else if(token == RKEY){
-        parenCounter--;
-        if(parenCounter == 0){
-          desempilha();
-        }
-        if(parenCounter < 0){
-          printf("\033[31mUnbalanced parentheses.\033[m\n");
-        }
-      }
-    }
-  }
-  imprimeTabela(stdout);
-  printf("\n\n");
-  apagaTabela();
-  return(0);
-}*/
-
 void abrirArq(char * fileName){
-  if(source = fopen(fileName,"r"))
+  if(source = fopen(fileName,"r")){
     yyin = source;
-  else
+    yyrestart(source);
+  }else{
     printf("Could not open file %s\n", fileName);
+  }
 }
-
-/*int main( ) {
-  EntradaTabela * myFunc  = criaEntrada( "MyFunc", FUN, INT, NULL, 10 );
-  EntradaTabela * ent = criaEntrada( "HakunaMatata", VAR, INT, myFunc, 10 );
-  int pos = insereNovaEntrada( ent );
-  printf( "Entrada '%s'inserida na posição %d\n", ent->idName, pos );
-  imprimeEntrada(ent);
-  return( 0 );
-}*/

@@ -1,11 +1,14 @@
 %{
 //GLC para gerar parser para calculadora simples
 #include <stdio.h>
+#include "tabela.h"
 void yyerror(const char *);
 extern "C"
 {
   int yylex();
   void abrirArq(char * fileName);
+  extern char* yytext;
+  extern int linenbr;
 }
 %}
 
@@ -22,7 +25,7 @@ extern "C"
 %nonassoc ELSE
 %%
 
-programa :	/* entrada vazia */
+programa :
 	| declaracao-lista
 	;
 declaracao-lista	:	declaracao-lista declaracao
@@ -117,6 +120,95 @@ arg-lista : arg-lista COLON expressao
   | expressao
   ;
 %%
+char escopo[255];
+
+DataType lastDType = VOID;
+char lastId[128];
+void tipoDeclaracao(int tok) {
+
+  EntradaTabela * ent;
+  char temp[255];
+  if(strcmp(escopo,"")== 0){
+    strcpy(temp, "global");
+  }else{
+    strcpy(temp, escopo);
+  }
+  switch (tok) {
+    DEBUG(printf("FUNC: %s %s();\n", lastId, tokenToString(lastDType));)
+    case LPAREN:{
+      //Função
+       ent = criaEntrada( lastId, lastId, FUN, lastDType, "", linenbr );
+       empilha(lastId);
+      break;
+    }
+    case LBOX:{
+      DEBUG(printf("VET: %s %s[];\n", tokenToString(lastDType), lastId);)
+      //VET
+      empilha(lastId);
+      ent = criaEntrada( concatenaPilha(), lastId, VET, lastDType, temp, linenbr );
+      desempilha();
+      break;
+    }
+    case SEMI:
+    case COLON:
+    case RPAREN:{
+      DEBUG(printf("VAR: %s %s;\n", tokenToString(lastDType), lastId);)
+      //VAR
+      empilha(lastId);
+      ent = criaEntrada( concatenaPilha(), lastId, VAR, lastDType, temp, linenbr );
+      desempilha();
+      break;
+    }
+    default:{
+      printf("\033[31mError found at line %d: Cannot declare '%s'\033[m\n", linenbr, lastId);
+      return;
+      //ERRO!!!!!!!!!!!!!!!!!!!!!!!!!!
+    }
+  }
+  // imprimeEntrada(ent);
+  insereNovaEntrada(ent);
+}
+
+void global( int tok ) {
+  // printf("Linha %d: %s\n", linenbr, yytext);
+  switch (tok) {
+    case ID:{
+      EntradaTabela * ent = buscaNaPilha(yytext);
+      if(ent != NULL){
+        DEBUG(printf("Adicionando linha %d ao id: '%s'\n", linenbr, ent->idName));
+        adicionaLinha(ent, linenbr);
+      }else{
+        printf("\033[31mError found at line %d: '%s' was not declared yet\033[m\n", linenbr, yytext);
+        return;
+      }
+      break;
+    }
+    case FLOAT:
+    case INT:
+    case VOID:{
+      lastDType = tok;
+      tok = yylex();
+      if(lastDType == VOID && tok == RPAREN){
+        DEBUG(printf("func(void)\n");)
+        return;
+      }
+      if(tok != ID ){
+        printf("\033[31mError found at line %d: Expected id but it was %s \033[m\n", linenbr, yytext);
+        return;
+      }
+      strcpy(lastId,yytext);
+      // DEBUG(printf("ID \'%s\' : \'%s\'\n", lastId, tokenToString(tok)));
+      strcpy(escopo, concatenaPilha());
+      // DEBUG(printf("Escopo : \'%s\'\n", escopo));
+      tok = yylex();
+      // DEBUG(printf("\'%s\' : \'%s\'\n", yytext, tokenToString(tok)));
+      tipoDeclaracao(tok);
+      break;
+    }
+  }
+}
+
+int parenCounter = 0;
 
 int main(int argc, char ** argv)
 {
@@ -124,16 +216,41 @@ int main(int argc, char ** argv)
     printf("usage: %s <source code>\n", argv[0]);
     exit(1);
   }
-  printf("\nParser em execução...\n");
   abrirArq(argv[1]);
+  printf("Gerando a tabela de símbolos...\n");
+  inicializaTabela( );
+  int token;
+  while (token=yylex()) {
+    if(token == ERROR){
+      printf("Error found at line %d: %s\n", linenbr, yytext);
+    }else{
+      if(token == ID || token == FLOAT || token == INT || token == VOID ){
+        // DEBUG(printf("\'%s\' : \'%s\'\n", yytext, tokenToString(token)));
+        global(token);
+      }else if(token == LKEY){
+        parenCounter++;
+      }else if(token == RKEY){
+        parenCounter--;
+        if(parenCounter == 0){
+          desempilha();
+        }
+        if(parenCounter < 0){
+          printf("\033[31mUnbalanced parentheses.\033[m\n");
+        }
+      }
+    }
+  }
+  imprimeTabela(stdout);
+  printf("\n\n");
+  apagaTabela();
+  abrirArq(argv[1]);
+  printf("\nParser em execução...\n");
   if (yyparse()==0) printf("\nAnálise sintática OK\n");
   else printf("\nAnálise sintática apresenta ERRO\n");
   return 0;
 }
 void yyerror(const char * msg)
 {
-  extern char* yytext;
-  extern int linenbr;
   if(yychar == ERROR){
     printf("\nLexical error : %s  Line: %d\n", yytext, linenbr);
   }else{
