@@ -15,7 +15,7 @@
 #include <string.h>
 
 extern YYSTYPE yylval;
-void abrirArq(char * fileName);
+int abrirArq(char * fileName);
 int linenbr = 1; /* source line number for listing */
 //int whileCounter = 0;
 //int ifCounter = 0;
@@ -84,11 +84,14 @@ OUTRO       [^0-9a-zA-Z;/=\-"+""*""("")""!"">""<""{""}""[""\]"","\n]
 %%
 
 FILE* source;
-void abrirArq(char * fileName){
+int abrirArq(char * fileName){
   if(source = fopen(fileName,"r")){
     yyin = source;
     yyrestart(source);
+    linenbr = 1;
+    return 1;
   }else{
     printf("Could not open file %s\n", fileName);
+    return 0;
   }
 }

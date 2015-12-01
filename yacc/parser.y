@@ -6,7 +6,7 @@ void yyerror(const char *);
 extern "C"
 {
   int yylex();
-  void abrirArq(char * fileName);
+  int abrirArq(char * fileName);
   extern char* yytext;
   extern int linenbr;
 }
@@ -216,7 +216,8 @@ int main(int argc, char ** argv)
     printf("usage: %s <source code>\n", argv[0]);
     exit(1);
   }
-  abrirArq(argv[1]);
+  if(!abrirArq(argv[1]))
+    return 1;
   printf("Gerando a tabela de símbolos...\n");
   inicializaTabela( );
   int token;
