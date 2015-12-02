@@ -10,6 +10,7 @@ extern "C"
   extern char* yytext;
   extern int linenbr;
 }
+int ok = FALSE;
 %}
 
 %start programa
@@ -36,6 +37,7 @@ declaracao : var-declaracao
   ;
 var-declaracao : tipo-especificador ID SEMI
   | tipo-especificador ID LBOX NUM RBOX SEMI
+  | error SEMI {ok = FALSE;}
   ;
 tipo-especificador : INT
   | FLOAT
@@ -65,9 +67,12 @@ statement : expressao-decl
   | selecao-decl
   | iteracao-decl
   | retorno-decl
+  | error {ok = FALSE;}
   ;
-expressao-decl : expressao SEMI
+expressao-decl :
+  | expressao SEMI
   | SEMI
+  | error SEMI {ok = FALSE;}
   ;
 selecao-decl : IF LPAREN expressao RPAREN statement %prec "then"
   | IF LPAREN expressao RPAREN statement ELSE statement
@@ -79,6 +84,7 @@ retorno-decl : RETURN SEMI
   ;
 expressao : var ASSIGN expressao
   | simples-expressao
+  | error {ok = FALSE;}
   ;
 var : ID
   | ID LBOX expressao RBOX
@@ -110,6 +116,7 @@ fator : LPAREN expressao RPAREN
   | ativacao
   | NUM
   | FNUM
+  | error {ok = FALSE;}
   ;
 ativacao : ID LPAREN args RPAREN
   ;
@@ -246,7 +253,7 @@ int main(int argc, char ** argv)
   apagaTabela();
   abrirArq(argv[1]);
   printf("\nParser em execução...\n");
-  if (yyparse()==0) printf("\nAnálise sintática OK\n");
+  if (yyparse()==0 && ok) printf("\nAnálise sintática OK\n");
   else printf("\nAnálise sintática apresenta ERRO\n");
   return 0;
 }
