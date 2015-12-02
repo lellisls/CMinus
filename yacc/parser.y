@@ -47,6 +47,7 @@ fun-declaracao : tipo-especificador ID LPAREN params RPAREN composto-decl
   ;
 params : param-lista
   | VOID
+  | error  {ok = FALSE;}  
   ;
 param-lista : param-lista COLON param
   | param
@@ -67,12 +68,9 @@ statement : expressao-decl
   | selecao-decl
   | iteracao-decl
   | retorno-decl
-  | error {ok = FALSE;}
   ;
 expressao-decl :
   | expressao SEMI
-  | SEMI
-  | error SEMI {ok = FALSE;}
   ;
 selecao-decl : IF LPAREN expressao RPAREN statement %prec "then"
   | IF LPAREN expressao RPAREN statement ELSE statement
@@ -84,7 +82,6 @@ retorno-decl : RETURN SEMI
   ;
 expressao : var ASSIGN expressao
   | simples-expressao
-  | error {ok = FALSE;}
   ;
 var : ID
   | ID LBOX expressao RBOX
