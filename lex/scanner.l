@@ -9,6 +9,7 @@
 %{
 #include "parser.tab.h"
 #include "globals.h"
+int linenbr = 1; /* source line number for listing */
 // #include "tabela.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +17,6 @@
 
 extern YYSTYPE yylval;
 int abrirArq(char * fileName);
-int linenbr = 1; /* source line number for listing */
 //int whileCounter = 0;
 //int ifCounter = 0;
 //int elseCounter = 0;

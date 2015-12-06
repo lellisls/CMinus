@@ -1,16 +1,26 @@
 %{
 //GLC para gerar parser para calculadora simples
 #include <stdio.h>
+
+#define YYPARSER /* distinguishes Yacc output from other code files */
+
+#include "globals.h"
+#include "util.h"
+#define YYSTYPE TreeNode *
+static char * savedName; /* for use in assignments */
+static int savedLineNo;  /* ditto */
+static TreeNode * savedTree; /* stores syntax tree for later return */
+
 #include "tabela.h"
+
 void yyerror(const char *);
 extern "C"
 {
   int yylex();
   int abrirArq(char * fileName);
   extern char* yytext;
-  extern int linenbr;
 }
-int ok = FALSE;
+int ok = TRUE;
 %}
 
 %start programa
@@ -21,13 +31,15 @@ int ok = FALSE;
 %token LBOX RBOX LKEY RKEY
 %token ERROR
 %error-verbose
-%printer { fprintf (yyoutput, "’%d’", $$); } NUM
+
+// %printer { fprintf (yyoutput, "’%d’", $$); } NUM
+
 %nonassoc "then"
 %nonassoc ELSE
 %%
 
 programa :
-	| declaracao-lista
+	| declaracao-lista { savedTree = $1;}
 	;
 declaracao-lista	:	declaracao-lista declaracao
 	|	declaracao
@@ -47,7 +59,7 @@ fun-declaracao : tipo-especificador ID LPAREN params RPAREN composto-decl
   ;
 params : param-lista
   | VOID
-  | error  {ok = FALSE;}  
+  | error  {ok = FALSE;}
   ;
 param-lista : param-lista COLON param
   | param
@@ -213,7 +225,7 @@ void global( int tok ) {
 }
 
 int parenCounter = 0;
-
+FILE * listing = stdout;
 int main(int argc, char ** argv)
 {
   if(argc != 2){
@@ -245,13 +257,14 @@ int main(int argc, char ** argv)
       }
     }
   }
-  imprimeTabela(stdout);
-  printf("\n\n");
+  // imprimeTabela(stdout);
+  // printf("\n\n");
   apagaTabela();
   abrirArq(argv[1]);
   printf("\nParser em execução...\n");
   if (yyparse()==0 && ok) printf("\nAnálise sintática OK\n");
   else printf("\nAnálise sintática apresenta ERRO\n");
+  printTree(savedTree);
   return 0;
 }
 void yyerror(const char * msg)

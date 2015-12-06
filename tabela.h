@@ -1,3 +1,6 @@
+#ifndef TABELA_H
+#define TABELA_H
+
 #include "globals.h"
 #include <stdio.h>
 #include <string.h>
@@ -169,7 +172,7 @@ char * concatenaPilha(){
   return texto;
 }
 
-int empilha(char idName[255]){
+void empilha(char idName[255]){
   strcpy(pilha[tamanhoPilha], idName);
   DEBUG(printf("Empilha %s\n", pilha[tamanhoPilha]);)
   tamanhoPilha ++;
@@ -204,3 +207,5 @@ EntradaTabela * buscaNaPilha(char * id){
   }
   return buscaEntrada(id);
 }
+
+#endif

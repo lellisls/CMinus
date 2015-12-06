@@ -5,22 +5,16 @@ ifeq ($(debug), 1)
 	BFLAGS=-v -g
 endif
 
-bison: scanner.o
-	@g++ $(CFLAGS) -std=c++11 -o bin/calc objs/* main.cpp -ly -lfl
-	@bin/calc
-
-parser.o:
-	@bison -d $(BFLAGS) yacc/parser.y
-	@g++ $(CFLAGS) -std=c++11 -c parser.tab.c -o objs/parser.o
-
-scanner.o: parser.o
-	@flex -o scanner.c lex/scanner.l
-	@gcc $(CFLAGS) -std=gnu99 -c scanner.c -o objs/scanner.o
-
 view:
 	dot -Tps parser.dot -o graph.ps; evince graph.ps
 
-parser: scanner.o
+parser:
+	@bison -d $(BFLAGS) yacc/parser.y
+	@g++ $(CFLAGS) -std=c++11 -c parser.tab.c -o objs/parser.o
+	@flex -o scanner.c lex/scanner.l
+	@gcc $(CFLAGS) -std=gnu99 -c scanner.c -o objs/scanner.o
+	@g++ $(CFLAGS) -std=c++11 -c globals.cpp -o objs/globals.o
+	@g++ $(CFLAGS) -std=c++11 -c util.cpp -o objs/util.o
 	@g++ $(CFLAGS) -std=c++11 objs/* -o bin/$@ -ly -lfl
 
 parser-tests: parser-test1 parser-test2 parser-test3 parser-test4

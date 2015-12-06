@@ -6,7 +6,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifndef YYPARSER
+
 #include "parser.tab.h"
+
+#endif
 
 #ifndef TRUE
 #define TRUE 1
@@ -24,70 +29,37 @@
 #define DEBUG( exp )
 #endif
 
-const char* tokenToString( int type ) {
-  switch( type ) {
-      // case ENDFILE:
-      // return( "ENDFILE" );
-      case ERROR:
-      return( "ERROR" );
-      case IF:
-      return( "IF" );
-      case ELSE:
-      return( "ELSE" );
-      case INT:
-      return( "INT" );
-      case FLOAT:
-      return( "FLOAT" );
-      case VOID:
-      return( "VOID" );
-      case RETURN:
-      return( "RETURN" );
-      case WHILE:
-      return( "WHILE" );
-      case ID:
-      return( "ID" );
-      case NUM:
-      return( "NUM" );
-      case FNUM:
-      return( "FNUM" );
-      case ASSIGN:
-      return( "ASSIGN" );
-      case EQ:
-      return( "EQ" );
-      case NEQ:
-      return( "NEQ" );
-      case LT:
-      return( "LT" );
-      case LE:
-      return( "LE" );
-      case GT:
-      return( "GT" );
-      case GE:
-      return( "GE" );
-      case PLUS:
-      return( "PLUS" );
-      case MINUS:
-      return( "MINUS" );
-      case TIMES:
-      return( "TIMES" );
-      case OVER:
-      return( "OVER" );
-      case LPAREN:
-      return( "LPAREN" );
-      case RPAREN:
-      return( "RPAREN" );
-      case SEMI:
-      return( "SEMI" );
-      case COLON:
-      return( "COLON" );
-      case LBOX:
-      return( "LBOX" );
-      case RBOX:
-      return( "RBOX" );
-      case LKEY:
-      return( "LKEY" );
-      case RKEY:
-      return( "RKEY" );
-  }
-}
+typedef int TokenType;
+
+extern FILE* source; /* source code text file */
+extern FILE* listing; /* listing output text file */
+extern FILE* code; /* code text file for TM simulator */
+extern int linenbr; /* source line number for listing */
+
+/**************************************************/
+/***********   Syntax tree for parsing ************/
+/**************************************************/
+
+typedef enum {StmtK,ExpK} NodeKind;
+typedef enum {IfK,WhileK,AssignK,ReadK,WriteK} StmtKind;
+typedef enum {OpK,ConstK,IdK} ExpKind;
+
+/* ExpType is used for type checking */
+typedef enum {Void,Integer,Boolean, FloatingPoint} ExpType;
+
+#define MAXCHILDREN 3
+
+typedef struct treeNode
+   { struct treeNode * child[MAXCHILDREN];
+     struct treeNode * sibling;
+     int linenbr;
+     NodeKind nodekind;
+     union { StmtKind stmt; ExpKind exp;} kind;
+     union { TokenType op;
+             int val;
+             float fval;
+             char * name; } attr;
+     ExpType type; /* for type checking of exps */
+   } TreeNode;
+
 #endif
