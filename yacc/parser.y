@@ -42,14 +42,26 @@ programa :
 	| declaracao-lista { savedTree = $1;}
 	;
 declaracao-lista	:	declaracao-lista declaracao
-	|	declaracao
+                      { YYSTYPE t = $1;
+                        if (t != NULL){
+                          while (t->sibling != NULL)
+                            t = t->sibling;
+                          t->sibling = $2;
+                          $$ = $1;
+                        }
+                        else{
+                          $$ = $2;
+                        }
+                      }
+	|	declaracao { $$ = $1; }
 	;
 declaracao : var-declaracao
   | fun-declaracao
+  | error  { $$ = NULL; }
   ;
 var-declaracao : tipo-especificador ID SEMI
   | tipo-especificador ID LBOX NUM RBOX SEMI
-  | error SEMI {ok = FALSE;}
+  // | error SEMI {ok = FALSE; $$ = NULL;}
   ;
 tipo-especificador : INT
   | FLOAT
@@ -59,7 +71,7 @@ fun-declaracao : tipo-especificador ID LPAREN params RPAREN composto-decl
   ;
 params : param-lista
   | VOID
-  | error  {ok = FALSE;}
+  // | error  {ok = FALSE;}
   ;
 param-lista : param-lista COLON param
   | param
