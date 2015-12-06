@@ -143,11 +143,11 @@ void printTree( TreeNode * tree )
         case AssignK:
           fprintf(listing,"Assign to: %s\n",tree->attr.name);
           break;
-        case ReadK:
-          fprintf(listing,"Read: %s\n",tree->attr.name);
+        case InputK:
+          fprintf(listing,"Input: %s\n",tree->attr.name);
           break;
-        case WriteK:
-          fprintf(listing,"Write\n");
+        case OutputK:
+          fprintf(listing,"Output\n");
           break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");
