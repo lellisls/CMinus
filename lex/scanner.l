@@ -66,7 +66,7 @@ OUTRO       [^0-9a-zA-Z;/=\-"+""*""("")""!"">""<""{""}""[""\]"","\n]
 ","             {return COLON;}
 {fnum}          {return FNUM;}
 {number}        {return NUM;}
-{identifier}    {return ID;}
+{identifier}    {strncpy(lastIDName, yytext, MAXTOKENLEN); return ID;}
 {newline}       {linenbr++;}
 {whitespace}    {/* skip whitespace */}
 "/*"             { char c1,c2;

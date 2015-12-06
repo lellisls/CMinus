@@ -9,9 +9,11 @@
 #include "scan.h"
 
 char tokenString[MAXTOKENLEN+1];
+char lastIDName[MAXTOKENLEN+1];
 
 #define YYSTYPE TreeNode *
 static char * savedName; /* for use in assignments */
+static char * savedFunctionName; /* for use in assignments */
 static int savedLineNo;  /* ditto */
 static TreeNode * savedTree; /* stores syntax tree for later return */
 static TokenType savedDataType;
@@ -73,14 +75,14 @@ declaracao : var-declaracao { $$ = $1; }
   | error  { $$ = NULL; }
   ;
 var-declaracao : tipo-especificador ID
-                  {savedName = copyString(tokenString);
+                  {savedName = copyString(lastIDName);
                    savedLineNo = linenbr;}
                   SEMI
                     {$$ = newStmtNode(VarDecK);
                      $$->attr.name = savedName;
-                     $$->linenbr = linenbr;
+                     $$->linenbr = savedLineNo;
                      $$->type = savedDataType;}
-  | tipo-especificador ID {savedName = copyString(tokenString);
+  | tipo-especificador ID {savedName = copyString(lastIDName);
                    savedLineNo = linenbr;}
                    LBOX NUM
                    {
@@ -91,7 +93,7 @@ var-declaracao : tipo-especificador ID
                    {
                     $$ = newStmtNode(VarDecK);
                     $$->attr.name = savedName;
-                    $$->linenbr = linenbr;
+                    $$->linenbr = savedLineNo;
                     $$->child[0] = $6;
                     $$->type = savedDataType;
                    }
@@ -101,18 +103,47 @@ tipo-especificador : INT {savedDataType = INT;}
   | FLOAT {savedDataType = FLOAT;}
   | VOID {savedDataType = VOID;}
   ;
-fun-declaracao : tipo-especificador ID LPAREN params RPAREN composto-decl
-                    {$$ = newStmtNode(FunDecK);}
+fun-declaracao : tipo-especificador ID
+                    {
+                     savedFunctionName = copyString(lastIDName);
+                     savedLineNo = linenbr;}
+                 LPAREN params RPAREN composto-decl
+                    {$$ = newStmtNode(FunDecK);
+                     $$->attr.name = savedFunctionName;
+                     $$->linenbr = savedLineNo;
+                     $$->type = savedDataType;
+                     $$->child[0] = $5;
+                     $$->child[1] = $7;
+                    }
   ;
-params : param-lista
-  | VOID
-  // | error  {ok = FALSE;}
+params : param-lista {$$ = $1;}
+  | VOID {$$ = NULL;}
+  | error  {$$ = NULL; ok = FALSE;}
   ;
 param-lista : param-lista COLON param
-  | param
+                      { YYSTYPE t = $1;
+                        if (t != NULL){
+                          while (t->sibling != NULL)
+                            t = t->sibling;
+                          t->sibling = $3;
+                          $$ = $1;
+                        }
+                        else{
+                          $$ = $3;
+                        }
+                      }
+  | param {$$ = $1;}
   ;
 param : tipo-especificador ID
+                  {$$ = newStmtNode(VarDecK);
+                   $$->attr.name = copyString(lastIDName);
+                   $$->linenbr = linenbr;
+                   $$->type = savedDataType;}
   | tipo-especificador ID LBOX RBOX
+                  {$$ = newStmtNode(VarDecK);
+                   $$->attr.name = copyString(lastIDName);
+                   $$->linenbr = linenbr;
+                   $$->type = savedDataType;}
   ;
 composto-decl : LKEY local-declaracoes statement-lista RKEY
   ;

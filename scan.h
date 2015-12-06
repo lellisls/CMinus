@@ -7,5 +7,5 @@
 
 /* tokenString array stores the lexeme of each token */
 extern char tokenString[MAXTOKENLEN+1];
-
+extern char lastIDName[MAXTOKENLEN+1];
 #endif
