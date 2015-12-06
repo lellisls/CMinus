@@ -38,7 +38,7 @@ extern int linenbr; /* source line number for listing */
 /**************************************************/
 
 typedef enum {StmtK,ExpK} NodeKind;
-typedef enum {IfK,WhileK,AssignK,VarDecK,FunDecK,InputK,OutputK} StmtKind;
+typedef enum {IfK,WhileK,AssignK,VarDecK,FunDecK,CompostoK,InputK,OutputK} StmtKind;
 typedef enum {OpK,ConstK,IdK} ExpKind;
 
 /* ExpType is used for type checking */
@@ -91,4 +91,4 @@ extern int TraceAnalyze;
 extern int TraceCode;
 
 /* Error = TRUE prevents further passes if an error occurs */
-extern int Error; 
+extern int Error;

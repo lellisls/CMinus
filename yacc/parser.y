@@ -85,18 +85,18 @@ var-declaracao : tipo-especificador ID
   | tipo-especificador ID {savedName = copyString(lastIDName);
                    savedLineNo = linenbr;}
                    LBOX NUM
-                   {
-                    $$ = newExpNode(ConstK);
-                    $$->attr.val = atoi(tokenString);
-                   }
+  {
+    $$ = newExpNode(ConstK);
+    $$->attr.val = atoi(tokenString);
+  }
                    RBOX SEMI
-                   {
-                    $$ = newStmtNode(VarDecK);
-                    $$->attr.name = savedName;
-                    $$->linenbr = savedLineNo;
-                    $$->child[0] = $6;
-                    $$->type = savedDataType;
-                   }
+  {
+    $$ = newStmtNode(VarDecK);
+    $$->attr.name = savedName;
+    $$->linenbr = savedLineNo;
+    $$->child[0] = $6;
+    $$->type = savedDataType;
+  }
   // | error SEMI {ok = FALSE; $$ = NULL;}
   ;
 tipo-especificador : INT {savedDataType = INT;}
@@ -104,48 +104,53 @@ tipo-especificador : INT {savedDataType = INT;}
   | VOID {savedDataType = VOID;}
   ;
 fun-declaracao : tipo-especificador ID
-                    {
-                     savedFunctionName = copyString(lastIDName);
-                     savedLineNo = linenbr;}
-                 LPAREN params RPAREN composto-decl
-                    {$$ = newStmtNode(FunDecK);
-                     $$->attr.name = savedFunctionName;
-                     $$->linenbr = savedLineNo;
-                     $$->type = savedDataType;
-                     $$->child[0] = $5;
-                     $$->child[1] = $7;
-                    }
+  {
+   savedFunctionName = copyString(lastIDName);
+   savedLineNo = linenbr;}
+               LPAREN params RPAREN composto-decl
+  {$$ = newStmtNode(FunDecK);
+   $$->attr.name = savedFunctionName;
+   $$->linenbr = savedLineNo;
+   $$->type = savedDataType;
+   $$->child[0] = $5;
+   $$->child[1] = $7;
+  }
   ;
 params : param-lista {$$ = $1;}
   | VOID {$$ = NULL;}
   | error  {$$ = NULL; ok = FALSE;}
   ;
 param-lista : param-lista COLON param
-                      { YYSTYPE t = $1;
-                        if (t != NULL){
-                          while (t->sibling != NULL)
-                            t = t->sibling;
-                          t->sibling = $3;
-                          $$ = $1;
-                        }
-                        else{
-                          $$ = $3;
-                        }
-                      }
+  { YYSTYPE t = $1;
+    if (t != NULL){
+      while (t->sibling != NULL)
+        t = t->sibling;
+      t->sibling = $3;
+      $$ = $1;
+    }
+    else{
+      $$ = $3;
+    }
+  }
   | param {$$ = $1;}
   ;
 param : tipo-especificador ID
-                  {$$ = newStmtNode(VarDecK);
-                   $$->attr.name = copyString(lastIDName);
-                   $$->linenbr = linenbr;
-                   $$->type = savedDataType;}
+  {$$ = newStmtNode(VarDecK);
+   $$->attr.name = copyString(lastIDName);
+   $$->linenbr = linenbr;
+   $$->type = savedDataType;}
   | tipo-especificador ID LBOX RBOX
-                  {$$ = newStmtNode(VarDecK);
-                   $$->attr.name = copyString(lastIDName);
-                   $$->linenbr = linenbr;
-                   $$->type = savedDataType;}
+  {$$ = newStmtNode(VarDecK);
+   $$->attr.name = copyString(lastIDName);
+   $$->linenbr = linenbr;
+   $$->type = savedDataType;}
   ;
 composto-decl : LKEY local-declaracoes statement-lista RKEY
+  {
+    $$ = newStmtNode(CompostoK);
+    $$->child[0] = $2;
+    $$->child[1] = $3;
+  }
   ;
 local-declaracoes : local-declaracoes var-declaracao
   | /* empty */

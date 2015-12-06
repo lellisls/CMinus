@@ -149,6 +149,9 @@ void printTree( TreeNode * tree )
         case FunDecK:
           fprintf(listing,"Decl. Função: %s %s\n", tokenToString(tree->type), tree->attr.name);
           break;
+        case CompostoK:
+          fprintf(listing,"Composto Decl.\n");
+          break;
         case InputK:
           fprintf(listing,"Input: %s\n",tree->attr.name);
           break;
