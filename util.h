@@ -5,10 +5,10 @@
 #include "globals.h"
 
 const char* tokenToString( TokenType type );
-void printToken( TokenType, const char* );
+void printToken( TokenType , const char* );
 TreeNode * newStmtNode(StmtKind);
 TreeNode * newExpNode(ExpKind);
-// char * copyString( char * );
+char * copyString( char * );
 void printTree( TreeNode * );
 
 #endif

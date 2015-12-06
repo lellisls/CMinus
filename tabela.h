@@ -41,7 +41,7 @@ typedef struct entradaTab {
 } EntradaTabela;
 
 /* Função de hashing define a posição na hash de acordo com uma string */
-int hash( char *key ) {
+int hashFunction( char *key ) {
   int temp = 0;
   int i = 0;
   while( key[ i ] != '\0' ) {
@@ -86,7 +86,7 @@ EntradaTabela* criaEntrada( const char idName[ 256 ], const char idVarName[ 256 
 }
 
 EntradaTabela* buscaEntrada( char idName[ 256 ] ) {
-  int pos = hash( idName );
+  int pos = hashFunction( idName );
   EntradaTabela *e = tabelaSimbolos[ pos ];
   while( e != NULL && strcmp( idName, e->idName ) ) {
     e = e->prox;
@@ -95,7 +95,7 @@ EntradaTabela* buscaEntrada( char idName[ 256 ] ) {
 }
 
 int insereNovaEntrada( EntradaTabela *entrada ) {
-  int pos = hash( entrada->idName );
+  int pos = hashFunction( entrada->idName );
   if( tabelaSimbolos[ pos ] == NULL ) {
     tabelaSimbolos[ pos ] = entrada;
   }

@@ -6,20 +6,33 @@
 
 #include "globals.h"
 #include "util.h"
+#include "scan.h"
+
+char tokenString[MAXTOKENLEN+1];
+
 #define YYSTYPE TreeNode *
 static char * savedName; /* for use in assignments */
 static int savedLineNo;  /* ditto */
 static TreeNode * savedTree; /* stores syntax tree for later return */
+static TokenType savedDataType;
+
+int TraceScan = FALSE;
 
 #include "tabela.h"
 
 void yyerror(const char *);
+
 extern "C"
 {
-  int yylex();
+  int getToken(void);
   int abrirArq(char * fileName);
   extern char* yytext;
 }
+
+static int yylex(void)
+{ return getToken(); }
+
+
 int ok = TRUE;
 %}
 
@@ -55,19 +68,41 @@ declaracao-lista	:	declaracao-lista declaracao
                       }
 	|	declaracao { $$ = $1; }
 	;
-declaracao : var-declaracao
-  | fun-declaracao
+declaracao : var-declaracao { $$ = $1; }
+  | fun-declaracao { $$ = $1; }
   | error  { $$ = NULL; }
   ;
-var-declaracao : tipo-especificador ID SEMI
-  | tipo-especificador ID LBOX NUM RBOX SEMI
+var-declaracao : tipo-especificador ID
+                  {savedName = copyString(tokenString);
+                   savedLineNo = linenbr;}
+                  SEMI
+                    {$$ = newStmtNode(VarDecK);
+                     $$->attr.name = savedName;
+                     $$->linenbr = linenbr;
+                     $$->type = savedDataType;}
+  | tipo-especificador ID {savedName = copyString(tokenString);
+                   savedLineNo = linenbr;}
+                   LBOX NUM
+                   {
+                    $$ = newExpNode(ConstK);
+                    $$->attr.val = atoi(tokenString);
+                   }
+                   RBOX SEMI
+                   {
+                    $$ = newStmtNode(VarDecK);
+                    $$->attr.name = savedName;
+                    $$->linenbr = linenbr;
+                    $$->child[0] = $6;
+                    $$->type = savedDataType;
+                   }
   // | error SEMI {ok = FALSE; $$ = NULL;}
   ;
-tipo-especificador : INT
-  | FLOAT
-  | VOID
+tipo-especificador : INT {savedDataType = INT;}
+  | FLOAT {savedDataType = FLOAT;}
+  | VOID {savedDataType = VOID;}
   ;
 fun-declaracao : tipo-especificador ID LPAREN params RPAREN composto-decl
+                    {$$ = newStmtNode(FunDecK);}
   ;
 params : param-lista
   | VOID
@@ -276,9 +311,11 @@ int main(int argc, char ** argv)
   printf("\nParser em execução...\n");
   if (yyparse()==0 && ok) printf("\nAnálise sintática OK\n");
   else printf("\nAnálise sintática apresenta ERRO\n");
+  printf("\nÁrvore sintática:\n");
   printTree(savedTree);
   return 0;
 }
+
 void yyerror(const char * msg)
 {
   if(yychar == ERROR){

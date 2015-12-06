@@ -2,6 +2,8 @@ int raio;
 
 float area;
 
+int meuvetor[123];
+
 int main(void){
   int raio;
   raio = 10;

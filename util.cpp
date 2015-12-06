@@ -1,6 +1,6 @@
 #include "globals.h"
 #include "util.h"
-
+#include "string.h"
 void printToken( TokenType token, const char* tokenString )
 { switch (token)
   { case IF:
@@ -88,7 +88,7 @@ TreeNode * newExpNode(ExpKind kind)
     t->nodekind = ExpK;
     t->kind.exp = kind;
     t->linenbr = linenbr;
-    t->type = Void;
+    t->type = VOID;
   }
   return t;
 }
@@ -96,17 +96,17 @@ TreeNode * newExpNode(ExpKind kind)
 /* Function copyString allocates and makes a new
  * copy of an existing string
  */
-// char * copyString(char * s)
-// { int n;
-//   char * t;
-//   if (s==NULL) return NULL;
-//   n = strlen(s)+1;
-//   t = malloc(n);
-//   if (t==NULL)
-//     fprintf(listing,"Out of memory error at line %d\n",linenbr);
-//   else strcpy(t,s);
-//   return t;
-// }
+char * copyString(char * s)
+{ int n;
+  char * t;
+  if (s==NULL) return NULL;
+  n = strlen(s)+1;
+  t = (char*) malloc(n);
+  if (t==NULL)
+    fprintf(listing,"Out of memory error at line %d\n",linenbr);
+  else strcpy(t,s);
+  return t;
+}
 
 /* Variable indentno is used by printTree to
  * store current number of spaces to indent
@@ -142,6 +142,12 @@ void printTree( TreeNode * tree )
           break;
         case AssignK:
           fprintf(listing,"Assign to: %s\n",tree->attr.name);
+          break;
+        case VarDecK:
+          fprintf(listing,"Decl. Var %s %s\n", tokenToString(tree->type), tree->attr.name);
+          break;
+        case FunDecK:
+          fprintf(listing,"Decl. Função: %s %s\n", tokenToString(tree->type), tree->attr.name);
           break;
         case InputK:
           fprintf(listing,"Input: %s\n",tree->attr.name);

@@ -10,9 +10,9 @@ view:
 
 parser:
 	@bison -d $(BFLAGS) yacc/parser.y
-	@g++ $(CFLAGS) -std=c++11 -c parser.tab.c -o objs/parser.o
 	@flex -o scanner.c lex/scanner.l
 	@gcc $(CFLAGS) -std=gnu99 -c scanner.c -o objs/scanner.o
+	@g++ $(CFLAGS) -std=c++11 -c parser.tab.c -o objs/parser.o
 	@g++ $(CFLAGS) -std=c++11 -c globals.cpp -o objs/globals.o
 	@g++ $(CFLAGS) -std=c++11 -c util.cpp -o objs/util.o
 	@g++ $(CFLAGS) -std=c++11 objs/* -o bin/$@ -ly -lfl

@@ -5,7 +5,6 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #ifndef YYPARSER
 
@@ -20,8 +19,6 @@
 #ifndef FALSE
 #define FALSE 0
 #endif
-
-#define MAXTOKENLEN 64
 
 #ifdef DEBUGFLAG
 #define DEBUG( exp ) exp
@@ -41,11 +38,12 @@ extern int linenbr; /* source line number for listing */
 /**************************************************/
 
 typedef enum {StmtK,ExpK} NodeKind;
-typedef enum {IfK,WhileK,AssignK,InputK,OutputK} StmtKind;
+typedef enum {IfK,WhileK,AssignK,VarDecK,FunDecK,InputK,OutputK} StmtKind;
 typedef enum {OpK,ConstK,IdK} ExpKind;
 
 /* ExpType is used for type checking */
-typedef enum {Void,Integer,Boolean, FloatingPoint} ExpType;
+typedef TokenType ExpType;
+// typedef enum {Void,Integer,Boolean, FloatingPoint} ExpType;
 
 #define MAXCHILDREN 3
 
@@ -63,3 +61,34 @@ typedef struct treeNode
    } TreeNode;
 
 #endif
+
+/* EchoSource = TRUE causes the source program to
+ * be echoed to the listing file with line numbers
+ * during parsing
+ */
+extern int EchoSource;
+
+/* TraceScan = TRUE causes token information to be
+ * printed to the listing file as each token is
+ * recognized by the scanner
+ */
+extern int TraceScan;
+
+/* TraceParse = TRUE causes the syntax tree to be
+ * printed to the listing file in linearized form
+ * (using indents for children)
+ */
+extern int TraceParse;
+
+/* TraceAnalyze = TRUE causes symbol table inserts
+ * and lookups to be reported to the listing file
+ */
+extern int TraceAnalyze;
+
+/* TraceCode = TRUE causes comments to be written
+ * to the TM code file as code is generated
+ */
+extern int TraceCode;
+
+/* Error = TRUE prevents further passes if an error occurs */
+extern int Error; 

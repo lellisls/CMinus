@@ -9,12 +9,14 @@
 %{
 #include "parser.tab.h"
 #include "globals.h"
+#include "util.h"
+
 int linenbr = 1; /* source line number for listing */
 // #include "tabela.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "scan.h"
 extern YYSTYPE yylval;
 int abrirArq(char * fileName);
 //int whileCounter = 0;
@@ -23,7 +25,6 @@ int abrirArq(char * fileName);
 //#include "util.h"
 //#include "scan.h"
 /* lexeme of identifier or reserved word */
-char tokenString[MAXTOKENLEN+1];
 %}
 
 digit       [0-9]
@@ -94,4 +95,22 @@ int abrirArq(char * fileName){
     printf("Could not open file %s\n", fileName);
     return 0;
   }
+}
+
+TokenType getToken(void)
+{ static int firstTime = TRUE;
+  TokenType currentToken;
+  if (firstTime)
+  { firstTime = FALSE;
+    linenbr++;
+    yyin = source;
+    yyout = listing;
+  }
+  currentToken = yylex();
+  strncpy(tokenString,yytext,MAXTOKENLEN);
+  /*if (TraceScan) {
+    fprintf(listing,"\t%d: ",linenbr);
+    printToken(currentToken,tokenString);
+  }*/
+  return currentToken;
 }
