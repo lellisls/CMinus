@@ -16,7 +16,7 @@ static char * savedName; /* for use in assignments */
 static char * savedFunctionName; /* for use in assignments */
 static int savedLineNo;  /* ditto */
 static TreeNode * savedTree; /* stores syntax tree for later return */
-static TokenType savedDataType;
+static TokenType savedDataType, savedOperator;
 
 int TraceScan = FALSE;
 
@@ -247,7 +247,17 @@ var : ID { $$ = newExpNode(IdK);
     $$->child[0] = $4;
   }
   ;
-simples-expressao : soma-expressao relacional soma-expressao
+simples-expressao : soma-expressao relacional
+  {
+    savedOperator = yychar;
+  }
+  soma-expressao
+  {
+    $$ = newExpNode(OpK);
+    $$->child[0] = $1;
+    $$->child[1] = $4;
+    $$->attr.op = savedOperator;
+  }
   | soma-expressao
   ;
 relacional : LE
