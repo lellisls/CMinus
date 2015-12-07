@@ -294,9 +294,9 @@ fator : LPAREN expressao RPAREN {$$ = $2;}
           $$->attr.val = atoi(tokenString);
         }
   | FNUM { $$ = newExpNode(FConstK);
-          $$->attr.val = atof(tokenString);
+          $$->attr.fval = atof(tokenString);
          }
-  | error {ok = FALSE;}
+  | error {$$ = NULL; ok = FALSE;}
   ;
 ativacao : ID LPAREN args RPAREN
   ;
