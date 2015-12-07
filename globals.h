@@ -39,7 +39,7 @@ extern int linenbr; /* source line number for listing */
 
 typedef enum {StmtK,ExpK} NodeKind;
 typedef enum {IfK,WhileK,AssignK,VarDecK,
-              FunDecK,CompostoK,
+              FunDecK,CompostoK, ParamsK,
               ReturnK,AtivacaoK} StmtKind;
 typedef enum {OpK,ConstK,FConstK,VetIdK, IdK} ExpKind;
 

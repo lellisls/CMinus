@@ -121,8 +121,10 @@ fun-declaracao : tipo-especificador ID
    $$->child[1] = $7;
   }
   ;
-params : param-lista {$$ = $1;}
-  | VOID {$$ = NULL;}
+
+params : param-lista {$$ = newStmtNode(ParamsK);
+                      $$->child[0] = $1;}
+  | VOID {$$ = newStmtNode(ParamsK);}
   | error  {$$ = NULL; ok = FALSE;}
   ;
 param-lista : param-lista COLON param
