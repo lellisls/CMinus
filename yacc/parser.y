@@ -1,7 +1,7 @@
 %{
 //GLC para gerar parser para calculadora simples
 #include <stdio.h>
-
+#include <vector>
 #define YYPARSER /* distinguishes Yacc output from other code files */
 
 #include "globals.h"
@@ -12,16 +12,13 @@ char tokenString[MAXTOKENLEN+1];
 char lastIDName[MAXTOKENLEN+1];
 
 #define YYSTYPE TreeNode *
-static char * savedName[128]; /* for use in assignments */
+std::vector<char *> savedName;
+std::vector<TokenType> savedOperator;
 int stackSize = 0;
-
-void push( char * );
-char * pop(  );
-char * top(  );
 
 static int savedLineNo;  /* ditto */
 static TreeNode * savedTree; /* stores syntax tree for later return */
-static TokenType savedDataType, savedOperator;
+static TokenType savedDataType;
 
 int TraceScan = FALSE;
 
@@ -80,14 +77,15 @@ declaracao : var-declaracao { $$ = $1; }
   | error  { $$ = NULL; }
   ;
 var-declaracao : tipo-especificador ID
-                  {push(copyString(lastIDName));
+                  {savedName.push_back(copyString(lastIDName));
                    savedLineNo = linenbr;}
                   SEMI
                     {$$ = newStmtNode(VarDecK);
-                     $$->attr.name = pop();
+                     $$->attr.name = savedName.back();
+                     savedName.pop_back();
                      $$->linenbr = savedLineNo;
                      $$->type = savedDataType;}
-  | tipo-especificador ID {push(copyString(lastIDName));
+  | tipo-especificador ID {savedName.push_back(copyString(lastIDName));
                    savedLineNo = linenbr;}
                    LBOX NUM
   {
@@ -97,7 +95,8 @@ var-declaracao : tipo-especificador ID
                    RBOX SEMI
   {
     $$ = newStmtNode(VarDecK);
-    $$->attr.name = pop();
+    $$->attr.name = savedName.back();
+    savedName.pop_back();
     $$->linenbr = savedLineNo;
     $$->child[0] = $6;
     $$->type = savedDataType;
@@ -110,11 +109,12 @@ tipo-especificador : INT {savedDataType = INT;}
   ;
 fun-declaracao : tipo-especificador ID
   {
-   push(copyString(lastIDName));
+   savedName.push_back(copyString(lastIDName));
    savedLineNo = linenbr;}
                LPAREN params RPAREN composto-decl
   {$$ = newStmtNode(FunDecK);
-   $$->attr.name = pop();
+   $$->attr.name = savedName.back();
+   savedName.pop_back();
    $$->linenbr = savedLineNo;
    $$->type = savedDataType;
    $$->child[0] = $5;
@@ -244,13 +244,14 @@ var : ID { $$ = newExpNode(IdK);
          }
   | ID
   {
-    push(copyString(lastIDName));
+    savedName.push_back(copyString(lastIDName));
     savedLineNo = linenbr;
   }
   LBOX expressao RBOX
   {
     $$ = newExpNode(VetIdK);
-    $$->attr.name = pop();
+    $$->attr.name = savedName.back();
+    savedName.pop_back();
     $$->child[0] = $4;
   }
   ;
@@ -259,40 +260,43 @@ simples-expressao : soma-expressao relacional soma-expressao
     $$ = newExpNode(OpK);
     $$->child[0] = $1;
     $$->child[1] = $3;
-    $$->attr.op = savedOperator;
+    $$->attr.op = savedOperator.back();
+    savedOperator.pop_back();
   }
   | soma-expressao { $$ = $1;}
   ;
-relacional : LE {savedOperator = LE;}
-  | LT {savedOperator = LT;}
-  | GT {savedOperator = GT;}
-  | GE {savedOperator = GE;}
-  | EQ {savedOperator = EQ;}
-  | NEQ {savedOperator = NEQ;}
+relacional : LE {savedOperator.push_back( LE );}
+  | LT {savedOperator.push_back( LT );}
+  | GT {savedOperator.push_back( GT );}
+  | GE {savedOperator.push_back( GE );}
+  | EQ {savedOperator.push_back( EQ );}
+  | NEQ {savedOperator.push_back( NEQ );}
   ;
 soma-expressao : soma-expressao soma termo
   {
     $$ = newExpNode(OpK);
     $$->child[0] = $1;
     $$->child[1] = $3;
-    $$->attr.op = savedOperator;
+    $$->attr.op = savedOperator.back();
+    savedOperator.pop_back();
   }
   | termo {$$ = $1;}
   ;
-soma : PLUS {savedOperator = PLUS;}
-  | MINUS {savedOperator = MINUS;}
+soma : PLUS {savedOperator.push_back( PLUS );}
+  | MINUS {savedOperator.push_back( MINUS );}
   ;
 termo : termo mult fator
   {
     $$ = newExpNode(OpK);
     $$->child[0] = $1;
     $$->child[1] = $3;
-    $$->attr.op = savedOperator;
+    $$->attr.op = savedOperator.back();
+    savedOperator.pop_back();
   }
   | fator {$$ = $1;}
   ;
-mult : TIMES {savedOperator = TIMES;}
-  | OVER {savedOperator = OVER;}
+mult : TIMES {savedOperator.push_back(TIMES);}
+  | OVER {savedOperator.push_back( OVER );}
   ;
 fator : LPAREN expressao RPAREN {$$ = $2;}
   | var {$$ = $1;}
@@ -307,7 +311,7 @@ fator : LPAREN expressao RPAREN {$$ = $2;}
   ;
 ativacao : ID
 {
-  push(copyString(lastIDName));
+  savedName.push_back(copyString(lastIDName));
   savedLineNo = linenbr;
 }
   LPAREN args RPAREN
@@ -315,7 +319,8 @@ ativacao : ID
   $$ = newStmtNode(AtivacaoK);
   $$->child[0] = $4;
   $$->linenbr = savedLineNo;
-  $$->attr.name = pop();
+  $$->attr.name = savedName.back();
+  savedName.pop_back();
 }
   ;
 args : arg-lista {$$ = $1;}
@@ -472,16 +477,4 @@ void yyerror(const char * msg)
   }else{
     printf("\n%s : %s  Line: %d\n", msg, yytext, linenbr);
   }
-}
-
-void push( char * str) {
-  // printf("PUSH %s\n", str);
-  savedName[stackSize ++] = str;
-}
-char * pop(  ) {
-  // printf("POP %s\n", savedName[stackSize-1]);
-  return savedName[--stackSize];
-}
-char * top(  ){
-  return savedName[stackSize-1];
 }
