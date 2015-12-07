@@ -13,8 +13,8 @@ void printToken( TokenType token, const char* tokenString )
       fprintf(listing,
          "reserved word: %s\n",tokenString);
       break;
-    case ASSIGN: fprintf(listing,":=\n"); break;
-    case EQ: fprintf(listing,"=\n"); break;
+    case ASSIGN: fprintf(listing,"=\n"); break;
+    case EQ: fprintf(listing,"==\n"); break;
     case NEQ: fprintf(listing,"!=\n"); break;
     case LT: fprintf(listing,"<\n"); break;
     case LE: fprintf(listing,"<=\n"); break;
@@ -174,6 +174,9 @@ void printTree( TreeNode * tree )
           break;
         case ConstK:
           fprintf(listing,"Const: %d\n",tree->attr.val);
+          break;
+        case FConstK:
+          fprintf(listing,"FConst: %f\n",tree->attr.fval);
           break;
         case IdK:
           fprintf(listing,"Id: %s\n",tree->attr.name);

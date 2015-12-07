@@ -254,7 +254,7 @@ simples-expressao : soma-expressao relacional soma-expressao
     $$->child[1] = $3;
     $$->attr.op = savedOperator;
   }
-  | soma-expressao
+  | soma-expressao { $$ = $1;}
   ;
 relacional : LE {savedOperator = LE;}
   | LT {savedOperator = LT;}
@@ -264,22 +264,38 @@ relacional : LE {savedOperator = LE;}
   | NEQ {savedOperator = NEQ;}
   ;
 soma-expressao : soma-expressao soma termo
-  | termo
+  {
+    $$ = newExpNode(OpK);
+    $$->child[0] = $1;
+    $$->child[1] = $3;
+    $$->attr.op = savedOperator;
+  }
+  | termo {$$ = $1;}
   ;
-soma : PLUS
-  | MINUS
+soma : PLUS {savedOperator = PLUS;}
+  | MINUS {savedOperator = MINUS;}
   ;
 termo : termo mult fator
-  | fator
+  {
+    $$ = newExpNode(OpK);
+    $$->child[0] = $1;
+    $$->child[1] = $3;
+    $$->attr.op = savedOperator;
+  }
+  | fator {$$ = $1;}
   ;
-mult : TIMES
-  | OVER
+mult : TIMES {savedOperator = TIMES;}
+  | OVER {savedOperator = OVER;}
   ;
-fator : LPAREN expressao RPAREN
-  | var
-  | ativacao
-  | NUM
-  | FNUM
+fator : LPAREN expressao RPAREN {$$ = $2;}
+  | var {$$ = $1;}
+  | ativacao {$$ = $1;}
+  | NUM { $$ = newExpNode(ConstK);
+          $$->attr.val = atoi(tokenString);
+        }
+  | FNUM { $$ = newExpNode(FConstK);
+          $$->attr.val = atof(tokenString);
+         }
   | error {ok = FALSE;}
   ;
 ativacao : ID LPAREN args RPAREN

@@ -41,7 +41,7 @@ typedef enum {StmtK,ExpK} NodeKind;
 typedef enum {IfK,WhileK,AssignK,VarDecK,
               FunDecK,CompostoK,InputK,OutputK,
               ReturnK} StmtKind;
-typedef enum {OpK,ConstK,VetIdK, IdK} ExpKind;
+typedef enum {OpK,ConstK,FConstK,VetIdK, IdK} ExpKind;
 
 /* ExpType is used for type checking */
 typedef TokenType ExpType;
