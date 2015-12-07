@@ -12,8 +12,13 @@ char tokenString[MAXTOKENLEN+1];
 char lastIDName[MAXTOKENLEN+1];
 
 #define YYSTYPE TreeNode *
-static char * savedName; /* for use in assignments */
-static char * savedFunctionName; /* for use in assignments */
+static char * savedName[128]; /* for use in assignments */
+int stackSize = 0;
+
+void push( char * );
+char * pop(  );
+char * top(  );
+
 static int savedLineNo;  /* ditto */
 static TreeNode * savedTree; /* stores syntax tree for later return */
 static TokenType savedDataType, savedOperator;
@@ -75,14 +80,14 @@ declaracao : var-declaracao { $$ = $1; }
   | error  { $$ = NULL; }
   ;
 var-declaracao : tipo-especificador ID
-                  {savedName = copyString(lastIDName);
+                  {push(copyString(lastIDName));
                    savedLineNo = linenbr;}
                   SEMI
                     {$$ = newStmtNode(VarDecK);
-                     $$->attr.name = savedName;
+                     $$->attr.name = pop();
                      $$->linenbr = savedLineNo;
                      $$->type = savedDataType;}
-  | tipo-especificador ID {savedName = copyString(lastIDName);
+  | tipo-especificador ID {push(copyString(lastIDName));
                    savedLineNo = linenbr;}
                    LBOX NUM
   {
@@ -92,7 +97,7 @@ var-declaracao : tipo-especificador ID
                    RBOX SEMI
   {
     $$ = newStmtNode(VarDecK);
-    $$->attr.name = savedName;
+    $$->attr.name = pop();
     $$->linenbr = savedLineNo;
     $$->child[0] = $6;
     $$->type = savedDataType;
@@ -105,11 +110,11 @@ tipo-especificador : INT {savedDataType = INT;}
   ;
 fun-declaracao : tipo-especificador ID
   {
-   savedFunctionName = copyString(lastIDName);
+   push(copyString(lastIDName));
    savedLineNo = linenbr;}
                LPAREN params RPAREN composto-decl
   {$$ = newStmtNode(FunDecK);
-   $$->attr.name = savedFunctionName;
+   $$->attr.name = pop();
    $$->linenbr = savedLineNo;
    $$->type = savedDataType;
    $$->child[0] = $5;
@@ -237,13 +242,13 @@ var : ID { $$ = newExpNode(IdK);
          }
   | ID
   {
-    savedName = copyString(lastIDName);
+    push(copyString(lastIDName));
     savedLineNo = linenbr;
   }
   LBOX expressao RBOX
   {
     $$ = newExpNode(VetIdK);
-    $$->attr.name = savedName;
+    $$->attr.name = pop();
     $$->child[0] = $4;
   }
   ;
@@ -298,13 +303,31 @@ fator : LPAREN expressao RPAREN {$$ = $2;}
          }
   | error {$$ = NULL; ok = FALSE;}
   ;
-ativacao : ID LPAREN args RPAREN
+ativacao : ID
+{
+  push(copyString(lastIDName));
+  savedLineNo = linenbr;
+}
+  LPAREN args RPAREN
+{
+  $$ = newStmtNode(AtivacaoK);
+  $$->child[0] = $4;
+  $$->linenbr = savedLineNo;
+  $$->attr.name = pop();
+}
   ;
-args : arg-lista
-  | /* empty */
+args : arg-lista {$$ = $1;}
+  | /* empty */ {$$ = NULL;}
   ;
 arg-lista : arg-lista COLON expressao
-  | expressao
+  {
+    YYSTYPE t = $1;
+    while (t->sibling != NULL)
+      t = t->sibling;
+    t->sibling = $3;
+    $$ = $1;
+  }
+  | expressao {$$ = $1;}
   ;
 %%
 char escopo[255];
@@ -447,4 +470,16 @@ void yyerror(const char * msg)
   }else{
     printf("\n%s : %s  Line: %d\n", msg, yytext, linenbr);
   }
+}
+
+void push( char * str) {
+  // printf("PUSH %s\n", str);
+  savedName[stackSize ++] = str;
+}
+char * pop(  ) {
+  // printf("POP %s\n", savedName[stackSize-1]);
+  return savedName[--stackSize];
+}
+char * top(  ){
+  return savedName[stackSize-1];
 }

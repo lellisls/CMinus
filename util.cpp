@@ -152,14 +152,11 @@ void printTree( TreeNode * tree )
         case CompostoK:
           fprintf(listing,"Composto Decl.\n");
           break;
-        case InputK:
-          fprintf(listing,"Input: %s\n",tree->attr.name);
-          break;
-        case OutputK:
-          fprintf(listing,"Output\n");
-          break;
         case ReturnK:
           fprintf(listing,"Return\n");
+          break;
+        case AtivacaoK:
+          fprintf(listing,"Ativacao: %s\n", tree->attr.name);
           break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");
