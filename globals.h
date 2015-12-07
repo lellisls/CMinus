@@ -38,8 +38,10 @@ extern int linenbr; /* source line number for listing */
 /**************************************************/
 
 typedef enum {StmtK,ExpK} NodeKind;
-typedef enum {IfK,WhileK,AssignK,VarDecK,FunDecK,CompostoK,InputK,OutputK} StmtKind;
-typedef enum {OpK,ConstK,IdK} ExpKind;
+typedef enum {IfK,WhileK,AssignK,VarDecK,
+              FunDecK,CompostoK,InputK,OutputK,
+              ReturnK} StmtKind;
+typedef enum {OpK,ConstK,VetIdK, IdK} ExpKind;
 
 /* ExpType is used for type checking */
 typedef TokenType ExpType;

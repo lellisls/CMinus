@@ -153,33 +153,99 @@ composto-decl : LKEY local-declaracoes statement-lista RKEY
   }
   ;
 local-declaracoes : local-declaracoes var-declaracao
-  | /* empty */
+  {
+    YYSTYPE t = $1;
+    if (t != NULL){
+      while (t->sibling != NULL)
+        t = t->sibling;
+      t->sibling = $2;
+      $$ = $1;
+    }
+    else{
+      $$ = $2;
+    }
+  }
+  | /* empty */ {$$ = NULL;}
   ;
 statement-lista : statement-lista statement
-  | /* empty */
+  {
+    YYSTYPE t = $1;
+    if (t != NULL){
+      while (t->sibling != NULL)
+        t = t->sibling;
+      t->sibling = $2;
+      $$ = $1;
+    }
+    else{
+      $$ = $2;
+    }
+  }
+  | /* empty */ {$$ = NULL;}
   ;
-statement : expressao-decl
-  | composto-decl
-  | selecao-decl
-  | iteracao-decl
-  | retorno-decl
+statement : expressao-decl {$$ = $1;}
+  | composto-decl {$$ = $1;}
+  | selecao-decl {$$ = $1;}
+  | iteracao-decl {$$ = $1;}
+  | retorno-decl {$$ = $1;}
   ;
 expressao-decl :
-  | expressao SEMI
+  | expressao SEMI {$$ = $1;}
   ;
 selecao-decl : IF LPAREN expressao RPAREN statement %prec "then"
+  {
+    $$ = newStmtNode(IfK);
+    $$->child[0] = $3;
+    $$->child[1] = $5;
+  }
   | IF LPAREN expressao RPAREN statement ELSE statement
+  {
+    $$ = newStmtNode(IfK);
+    $$->child[0] = $3;
+    $$->child[1] = $5;
+    $$->child[2] = $7;
+  }
   ;
 iteracao-decl : WHILE LPAREN expressao RPAREN statement
+  {
+    $$ = newStmtNode(WhileK);
+    $$->child[0] = $3;
+    $$->child[1] = $5;
+  }
   ;
 retorno-decl : RETURN SEMI
+  {
+    $$ = newStmtNode(ReturnK);
+  }
   | RETURN expressao SEMI
+  {
+    $$ = newStmtNode(ReturnK);
+    $$->child[0] = $2;
+  }
   ;
-expressao : var ASSIGN expressao
-  | simples-expressao
+expressao :
+  var ASSIGN expressao
+  {
+    $$ = newStmtNode(AssignK);
+    $$->child[0] = $1;
+    $$->child[1] = $3;
+    $$->linenbr = savedLineNo;
+  }
+  |simples-expressao {$$ = $1;}
   ;
-var : ID
-  | ID LBOX expressao RBOX
+var : ID { $$ = newExpNode(IdK);
+           $$->attr.name = copyString(lastIDName);
+         }
+  | ID
+  {
+    savedName = copyString(lastIDName);
+    savedLineNo = linenbr;
+  }
+  LBOX expressao RBOX
+  {
+    $$ = newExpNode(VetIdK);
+    $$->attr.name = savedName;
+    $$->child[0] = $4;
+  }
   ;
 simples-expressao : soma-expressao relacional soma-expressao
   | soma-expressao

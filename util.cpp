@@ -141,7 +141,7 @@ void printTree( TreeNode * tree )
           fprintf(listing,"While\n");
           break;
         case AssignK:
-          fprintf(listing,"Assign to: %s\n",tree->attr.name);
+          fprintf(listing,"Assign: \n");
           break;
         case VarDecK:
           fprintf(listing,"Decl. Var %s %s\n", tokenToString(tree->type), tree->attr.name);
@@ -157,6 +157,9 @@ void printTree( TreeNode * tree )
           break;
         case OutputK:
           fprintf(listing,"Output\n");
+          break;
+        case ReturnK:
+          fprintf(listing,"Return\n");
           break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");
@@ -174,6 +177,9 @@ void printTree( TreeNode * tree )
           break;
         case IdK:
           fprintf(listing,"Id: %s\n",tree->attr.name);
+          break;
+        case VetIdK:
+          fprintf(listing,"Vet Id: %s\n",tree->attr.name);
           break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");

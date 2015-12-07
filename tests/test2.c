@@ -9,6 +9,8 @@ int gcd (int u, int v)
 /* val = 3.13; */
 void main(void)
 { int x; int y;
+  int v[10];
   x = input(); y = input();
+  v[x + y] = 10;
   output(gcd(x,y));
 }
