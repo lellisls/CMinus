@@ -247,25 +247,21 @@ var : ID { $$ = newExpNode(IdK);
     $$->child[0] = $4;
   }
   ;
-simples-expressao : soma-expressao relacional
-  {
-    savedOperator = yychar;
-  }
-  soma-expressao
+simples-expressao : soma-expressao relacional soma-expressao
   {
     $$ = newExpNode(OpK);
     $$->child[0] = $1;
-    $$->child[1] = $4;
+    $$->child[1] = $3;
     $$->attr.op = savedOperator;
   }
   | soma-expressao
   ;
-relacional : LE
-  | LT
-  | GT
-  | GE
-  | EQ
-  | NEQ
+relacional : LE {savedOperator = LE;}
+  | LT {savedOperator = LT;}
+  | GT {savedOperator = GT;}
+  | GE {savedOperator = GE;}
+  | EQ {savedOperator = EQ;}
+  | NEQ {savedOperator = NEQ;}
   ;
 soma-expressao : soma-expressao soma termo
   | termo
