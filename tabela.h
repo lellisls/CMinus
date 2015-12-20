@@ -37,6 +37,8 @@ EntradaTabela* criaEntrada( const char * idName, const char * idVarName, IdType 
 
 EntradaTabela* buscaEntrada( const char * idName );
 
+EntradaTabela* buscaFuncao( const char * idName );
+
 int insereNovaEntrada( EntradaTabela *entrada );
 
 void inicializaTabela( );

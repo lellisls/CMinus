@@ -70,6 +70,18 @@ EntradaTabela* buscaEntrada( const char * idName ) {
   return( e );
 }
 
+EntradaTabela* buscaFuncao( const char * idName ) {
+  // printf("Buscando por \'%s\'\n", idName );
+  int pos = hashFunction( idName );
+  // printf("Pos %d\n", pos);
+  EntradaTabela *e = tabelaSimbolos[ pos ];
+  while( e != NULL && ( e->idType != FUN || strcmp( idName, e->idName ) != 0 ) ) {
+    e = e->prox;
+  }
+  // printf("Encontrei %s\n", e->idName);
+  return( e );
+}
+
 int insereNovaEntrada( EntradaTabela *entrada ) {
   int pos = hashFunction( entrada->idName );
   if( tabelaSimbolos[ pos ] == NULL ) {
