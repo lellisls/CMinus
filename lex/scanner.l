@@ -102,7 +102,7 @@ TokenType getToken(void)
   TokenType currentToken;
   if (firstTime)
   { firstTime = FALSE;
-    linenbr++;
+    /*linenbr++;*/
     yyin = source;
     yyout = listing;
   }

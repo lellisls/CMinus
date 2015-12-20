@@ -15,6 +15,8 @@ parser:
 	@g++ $(CFLAGS) -std=c++11 -c parser.tab.c -o objs/parser.o
 	@g++ $(CFLAGS) -std=c++11 -c globals.cpp -o objs/globals.o
 	@g++ $(CFLAGS) -std=c++11 -c util.cpp -o objs/util.o
+	@g++ $(CFLAGS) -std=c++11 -c tabela.cpp -o objs/tabela.o
+	@g++ $(CFLAGS) -std=c++11 -c semantica.cpp -o objs/semantica.o
 	@g++ $(CFLAGS) -std=c++11 objs/* -o bin/$@ -ly -lfl
 
 parser-tests: parser-test1 parser-test2 parser-test3 parser-test4

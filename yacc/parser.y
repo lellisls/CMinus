@@ -7,7 +7,7 @@
 #include "globals.h"
 #include "util.h"
 #include "scan.h"
-
+#include "semantica.h"
 char tokenString[MAXTOKENLEN+1];
 char lastIDName[MAXTOKENLEN+1];
 
@@ -395,7 +395,7 @@ void global( int tok ) {
         DEBUG(printf("Adicionando linha %d ao id: '%s'\n", linenbr, ent->idName));
         adicionaLinha(ent, linenbr);
       }else{
-        printf("\033[31mError found at line %d: '%s' was not declared yet\033[m\n", linenbr, yytext);
+        DEBUG(printf("\033[31mError found at line %d: '%s' was not declared yet\033[m\n", linenbr, yytext));
         return;
       }
       break;
@@ -410,7 +410,7 @@ void global( int tok ) {
         return;
       }
       if(tok != ID ){
-        printf("\033[31mError found at line %d: Expected id but it was %s \033[m\n", linenbr, yytext);
+        DEBUG(printf("\033[31mError found at line %d: Expected id but it was %s \033[m\n", linenbr, yytext));
         return;
       }
       strcpy(lastId,yytext);
@@ -458,15 +458,17 @@ int main(int argc, char ** argv)
       }
     }
   }
-  // imprimeTabela(stdout);
+  imprimeTabela(stdout);
   // printf("\n\n");
-  apagaTabela();
   abrirArq(argv[1]);
   printf("\nParser em execução...\n");
   if (yyparse()==0 && ok) printf("\nAnálise sintática OK\n");
   else printf("\nAnálise sintática apresenta ERRO\n");
-  printf("\nÁrvore sintática:\n");
-  printTree(savedTree);
+  // printf("\nÁrvore sintática:\n");
+  // printTree(savedTree);
+  printf("Análise Semântica:\n");
+  analiseSemantica(savedTree);
+  apagaTabela();
   return 0;
 }
 

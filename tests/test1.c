@@ -2,10 +2,11 @@ int raio;
 
 float area;
 
-int meuvetor[123];
+void var;
 
-int main(void){
-  int raio;
+int meuvetor[123];
+int juquinha(void){
+  /* int raio; */
   raio = 10;
   area = 3.14 * raio * raio;
   area = 10;
@@ -17,5 +18,5 @@ int main(void){
     area = raio;
     raio = k;
   }
-
+  bacon = vida();
 }
