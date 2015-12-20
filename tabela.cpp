@@ -101,7 +101,7 @@ void inicializaTabela( ) {
   for( int i = 0; i < SIZE; ++i ) {
     tabelaSimbolos[ i ] = NULL;
   }
-  insereNovaEntrada( criaEntrada("input","input",FUN,VOID,"",-1) );
+  insereNovaEntrada( criaEntrada("input","input",FUN,INT,"",-1) );
   insereNovaEntrada( criaEntrada("output","output",FUN,VOID,"",-1) );
 }
 
