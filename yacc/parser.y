@@ -74,7 +74,7 @@ declaracao-lista	:	declaracao-lista declaracao
 	;
 declaracao : var-declaracao { $$ = $1; }
   | fun-declaracao { $$ = $1; }
-  | error  { $$ = NULL; }
+  | error  { $$ = NULL; ok = FALSE;}
   ;
 var-declaracao : tipo-especificador ID
                   {savedName.push_back(copyString(lastIDName));
