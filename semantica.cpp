@@ -6,14 +6,29 @@
 void analiseRec( TreeNode *node ) {
   if( node->nodekind == StmtK ) {
     if(node->kind.stmt == AssignK){
+      TreeNode * esq = node->child[0];
       TreeNode * dir = node->child[1];
       if(dir!=NULL && dir->nodekind ==StmtK && dir->kind.stmt == AtivacaoK ){
         EntradaTabela * e = buscaFuncao(dir->attr.name);
         if(e != NULL && e->dType == VOID ){
-          //  \'%s\' is of type \'%s\' and
-          printf( "\033[31mError found at line %d: Invalid attribution. '%s' returns \'void\'.\033[m\n",
+          if(esq!=NULL && esq->nodekind ==ExpK && ( esq->kind.exp == IdK || esq->kind.exp == VetIdK ) ){
+            EntradaTabela * e2 = buscaNaPilha(esq->attr.name);
+            if(e2 != NULL){
+              printf( "\033[31mError found at line %d: Invalid attribution. \'%s\' is of type \'%s\' and '%s' returns \'void\'.\033[m\n",
+                    node->linenbr,
+                    esq->attr.name,
+                    tokenToString(e2->dType),
+                    dir->attr.name );
+            }else{
+              printf( "\033[31mError found at line %d: Invalid attribution. '%s' returns \'void\'.\033[m\n",
                 node->linenbr,
                 dir->attr.name );
+            }
+          }else{
+            printf( "\033[31mError found at line %d: Invalid attribution. '%s' returns \'void\'.\033[m\n",
+                  node->linenbr,
+                  dir->attr.name );
+          }
         }
       }
     }
@@ -43,12 +58,12 @@ void analiseRec( TreeNode *node ) {
       }
       e = buscaNaPilha( node->attr.name );
       if( e != NULL && e->dType == VOID) {
-        printf( "\033[31mError found at line %d: Variable '%s' cannot be void type.\033[m\n",
+        printf( "\033[31mError found at line %d: Invalid declaration, '%s' cannot be void type.\033[m\n",
                 node->linenbr,
                 node->attr.name );
       }
       if(e != NULL && e->linhas[0] != node->linenbr){
-        printf( "\033[31mError found at line %d: Variable '%s' was already declared in this scope.\033[m\n",
+        printf( "\033[31mError found at line %d: Invalid declaration, '%s' was already declared in this scope.\033[m\n",
                 node->linenbr,
                 node->attr.name );
       }
